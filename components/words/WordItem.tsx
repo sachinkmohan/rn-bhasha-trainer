@@ -1,10 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, StyleSheet, Text } from "react-native";
 import { Word } from "./wordTypes";
 const WordItem = ({ word }: { word: Word }) => {
+  const router = useRouter();
+  const openModal = () => {
+    router.push({ pathname: "/modal", params: { wordId: word.id } });
+  };
   return (
-    <View style={styles.itemContainer}>
+    <Pressable onPress={openModal} style={styles.itemContainer}>
       <Text style={styles.itemText}>{word.word.inTranslit}</Text>
-    </View>
+    </Pressable>
   );
 };
 
