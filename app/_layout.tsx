@@ -3,15 +3,19 @@ import {
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/use-color-scheme";
-import { auth, restoreAuthState, signOutUser } from "./utils/firebaseConfig";
+import {
+  auth,
+  getStoredAuthToken,
+  getStoredUserId,
+  signOutUser,
+} from "./utils/firebaseConfig";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -34,7 +38,19 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check for stored authentication on app start
     const initializeAuth = async () => {
       console.log("Initializing auth state...");
-      await restoreAuthState();
+
+      // Check if we have stored auth token
+      const storedToken = await getStoredAuthToken();
+      const storedUserId = await getStoredUserId();
+
+      if (storedToken && storedUserId) {
+        console.log("Found stored auth token, user should be authenticated");
+        setIsAuthenticated(true);
+        setIsLoading(false);
+      } else {
+        console.log("No stored auth token found");
+        setIsLoading(false);
+      }
     };
     initializeAuth();
 
@@ -57,6 +73,8 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
       signOut: async () => {
         await signOutUser();
         setIsAuthenticated(false);
+        // Force redirect to login screen
+        router.replace("/(auth)/sign-in");
       },
     }),
     [isAuthenticated, isLoading]
@@ -79,33 +97,16 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AuthProvider>
-        <AuthNavigator />
+        <Stack>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="modal"
+            options={{ presentation: "modal", title: "Modal" }}
+          />
+        </Stack>
       </AuthProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
-  );
-}
-
-function AuthNavigator() {
-  const { isAuthenticated, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-        <Text style={{ marginTop: 10 }}>Loading...</Text>
-      </View>
-    );
-  }
-
-  return (
-    <Stack>
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="modal"
-        options={{ presentation: "modal", title: "Modal" }}
-      />
-    </Stack>
   );
 }

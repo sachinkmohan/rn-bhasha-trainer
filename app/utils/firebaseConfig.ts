@@ -4,7 +4,6 @@ import { initializeApp } from "firebase/app";
 
 import {
   createUserWithEmailAndPassword,
-  getReactNativePersistence,
   initializeAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
@@ -24,9 +23,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+const auth = initializeAuth(app);
 
 const signUpWithEmail = async (
   email: string,
@@ -58,7 +55,14 @@ const signUpWithEmail = async (
       instaHandle,
       growthPoints: 0,
     });
+    console.log("User document set in Firestore");
+
+    // Get and store the ID token
+    const idToken = await user.getIdToken();
     await AsyncStorage.setItem("userID", user.uid ?? "");
+    await AsyncStorage.setItem("authToken", idToken);
+    console.log("Auth token stored successfully");
+
     if (onSuccess) onSuccess();
   } catch (error) {
     console.error("Error during sign up:", error);
@@ -72,6 +76,7 @@ const signInWithEmail = async (
   onSuccess?: () => void,
   onError?: (error: any) => void
 ): Promise<string | void> => {
+  console.log("signInWithEmail called", { email });
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,
@@ -79,12 +84,59 @@ const signInWithEmail = async (
       password
     );
     const user = userCredential.user;
+    console.log("User signed in:", user.uid);
+
+    // Get and store the ID token
+    const idToken = await user.getIdToken();
     await AsyncStorage.setItem("userID", user.uid ?? "");
+    await AsyncStorage.setItem("authToken", idToken);
+    console.log("Auth token stored successfully");
+
     if (onSuccess) onSuccess();
   } catch (error: any) {
+    console.error("Error during sign in:", error);
     if (onError) onError(error);
     return error.message;
   }
 };
 
-export { auth, db, signInWithEmail, signUpWithEmail };
+const signOutUser = async () => {
+  try {
+    await auth.signOut();
+    await AsyncStorage.removeItem("userID");
+    await AsyncStorage.removeItem("authToken");
+    console.log("User signed out and tokens cleared");
+  } catch (error) {
+    console.error("Error during sign out:", error);
+  }
+};
+
+const getStoredAuthToken = async (): Promise<string | null> => {
+  try {
+    const token = await AsyncStorage.getItem("authToken");
+    return token;
+  } catch (error) {
+    console.error("Error getting stored auth token:", error);
+    return null;
+  }
+};
+
+const getStoredUserId = async (): Promise<string | null> => {
+  try {
+    const userId = await AsyncStorage.getItem("userID");
+    return userId;
+  } catch (error) {
+    console.error("Error getting stored user ID:", error);
+    return null;
+  }
+};
+
+export {
+  auth,
+  db,
+  getStoredAuthToken,
+  getStoredUserId,
+  signInWithEmail,
+  signOutUser,
+  signUpWithEmail,
+};
