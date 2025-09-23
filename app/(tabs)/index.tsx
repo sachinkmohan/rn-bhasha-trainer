@@ -1,8 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../_layout";
 
 // Simple Hello World screen
 export default function HomeScreen() {
+  const { signOut } = useAuth();
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome</Text>
@@ -12,6 +14,7 @@ export default function HomeScreen() {
         <Text style={styles.progressText}>2/10</Text>
         <Text style={styles.wordsLearned}>Words Learned</Text>
       </View>
+      <Button title="Sign Out" onPress={signOut} color="#FF3D00" />
     </View>
   );
 }
