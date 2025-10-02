@@ -31,6 +31,14 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/**
+ * Provides authentication state, actions, and loading status to descendant components.
+ *
+ * Initializes authentication state from stored credentials, subscribes to Firebase auth state changes,
+ * and exposes `isAuthenticated`, `isLoading`, `signIn`, and `signOut` through AuthContext.
+ *
+ * @returns The AuthContext provider React element that wraps the given `children`.
+ */
 function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -88,6 +96,13 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/**
+ * Accesses the authentication context provided by AuthProvider.
+ *
+ * @returns The auth context object with `isAuthenticated`, `isLoading`, `signIn`, and `signOut`.
+ *
+ * @throws If called outside an `AuthProvider`, throws an `Error`.
+ */
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
@@ -96,6 +111,13 @@ export function useAuth() {
   return context;
 }
 
+/**
+ * Root layout component that provides theming and authentication around the app navigation.
+ *
+ * Renders a ThemeProvider (selecting dark or default theme based on the device color scheme), an AuthProvider that wraps the app navigation Stack with routes for authentication, main tabs, and a modal, and a StatusBar.
+ *
+ * @returns A JSX element containing the themed AuthProvider-wrapped navigation stack and a status bar.
+ */
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 

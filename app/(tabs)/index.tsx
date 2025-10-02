@@ -2,7 +2,13 @@ import React from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../_layout";
 
-// Simple Hello World screen
+/**
+ * Renders the Home screen showing a welcome message, progress summary, and a Sign Out button.
+ *
+ * Pressing the Sign Out button invokes the authentication `signOut` function from context.
+ *
+ * @returns The React element tree for the home screen UI.
+ */
 export default function HomeScreen() {
   const { signOut } = useAuth();
   return (
