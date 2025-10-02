@@ -4,6 +4,13 @@ import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { useAuth } from "../_layout";
 import { signInWithEmail } from "../utils/firebaseConfig";
 
+/**
+ * Renders a sign-in screen with email and password inputs and a submit button.
+ *
+ * Attempts to authenticate with the entered credentials when the button is pressed; on successful authentication it triggers the app's sign-in flow, and on failure it shows an alert with the error message.
+ *
+ * @returns A React element containing the sign-in form: email and password fields and a button that displays "Logging in..." while the sign-in is in progress.
+ */
 export default function SignIn() {
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
