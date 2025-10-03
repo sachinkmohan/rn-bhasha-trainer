@@ -53,12 +53,19 @@ const signUpWithEmail = async (
   onError?: (error: any) => void
 ) => {
   try {
+    if(!email || !email.includes("@")) {
+      throw new Error("Invalid email address");
+    }
+    if(!password || password.length < 6) {
+      throw new Error("Password must be at least 6 characters long");
+    }
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
       password
     );
     const user = userCredential.user;
+    if(!user.uid) throw new Error("User ID is missing");
 
     await setDoc(doc(db, "users", user.uid), {
       email,
