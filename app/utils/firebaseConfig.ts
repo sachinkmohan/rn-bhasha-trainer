@@ -1,5 +1,5 @@
 // Import the functions you need from the SDKs you need
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as SecureStore from "expo-secure-store";
 import { initializeApp } from "firebase/app";
 
 import {
@@ -59,8 +59,8 @@ const signUpWithEmail = async (
 
     // Get and store the ID token
     const idToken = await user.getIdToken();
-    await AsyncStorage.setItem("userID", user.uid ?? "");
-    await AsyncStorage.setItem("authToken", idToken);
+    await SecureStore.setItemAsync("userID", user.uid ?? "");
+    await SecureStore.setItemAsync("authToken", idToken);
     console.log("Auth token stored successfully");
 
     if (onSuccess) onSuccess();
@@ -88,8 +88,8 @@ const signInWithEmail = async (
 
     // Get and store the ID token
     const idToken = await user.getIdToken();
-    await AsyncStorage.setItem("userID", user.uid ?? "");
-    await AsyncStorage.setItem("authToken", idToken);
+    await SecureStore.setItemAsync("userID", user.uid ?? "");
+    await SecureStore.setItemAsync("authToken", idToken);
     console.log("Auth token stored successfully");
 
     if (onSuccess) onSuccess();
@@ -103,8 +103,8 @@ const signInWithEmail = async (
 const signOutUser = async () => {
   try {
     await auth.signOut();
-    await AsyncStorage.removeItem("userID");
-    await AsyncStorage.removeItem("authToken");
+    await SecureStore.deleteItemAsync("userID");
+    await SecureStore.deleteItemAsync("authToken");
     console.log("User signed out and tokens cleared");
   } catch (error) {
     console.error("Error during sign out:", error);
@@ -113,7 +113,7 @@ const signOutUser = async () => {
 
 const getStoredAuthToken = async (): Promise<string | null> => {
   try {
-    const token = await AsyncStorage.getItem("authToken");
+    const token = await SecureStore.getItemAsync("authToken");
     return token;
   } catch (error) {
     console.error("Error getting stored auth token:", error);
@@ -123,7 +123,7 @@ const getStoredAuthToken = async (): Promise<string | null> => {
 
 const getStoredUserId = async (): Promise<string | null> => {
   try {
-    const userId = await AsyncStorage.getItem("userID");
+    const userId = await SecureStore.getItemAsync("userID");
     return userId;
   } catch (error) {
     console.error("Error getting stored user ID:", error);
