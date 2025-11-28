@@ -12,6 +12,11 @@ export default function HomeScreen() {
         <Text style={styles.progressText}>2/10</Text>
         <Text style={styles.wordsLearned}>Words Learned</Text>
       </View>
+      <View>
+        <Text className="font-bold bg-blue-500 mt-4 text-2xl">
+          Keep up the great work!
+        </Text>
+      </View>
     </View>
   );
 }
