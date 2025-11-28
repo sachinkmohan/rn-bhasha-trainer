@@ -24,6 +24,7 @@ for (const varName of requiredEnvVars) {
   if (!process.env[varName]) {
     throw new Error(`Missing required environment variable: ${varName}`);
   }
+}
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -53,10 +54,10 @@ const signUpWithEmail = async (
   onError?: (error: any) => void
 ) => {
   try {
-    if(!email || !email.includes("@")) {
+    if (!email?.includes("@")) {
       throw new Error("Invalid email address");
     }
-    if(!password || password.length < 6) {
+    if (!password || password.length < 6) {
       throw new Error("Password must be at least 6 characters long");
     }
     const userCredential = await createUserWithEmailAndPassword(
@@ -65,7 +66,7 @@ const signUpWithEmail = async (
       password
     );
     const user = userCredential.user;
-    if(!user.uid) throw new Error("User ID is missing");
+    if (!user.uid) throw new Error("User ID is missing");
 
     await setDoc(doc(db, "users", user.uid), {
       email,
