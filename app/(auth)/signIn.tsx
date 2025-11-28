@@ -34,7 +34,7 @@ export default function SignIn() {
   };
   return (
     <View className="px-6" style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>Welcome back!</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -51,7 +51,7 @@ export default function SignIn() {
         onChangeText={setPassword}
       />
       <Pressable
-        className="bg-blue-600 rounded-full px-6 py-3 w-full"
+        className="bg-blue-600 rounded-full px-6 py-3 w-full shadow-lg"
         onPress={handleLogin}
         disabled={loading}
         accessible={true}
@@ -70,7 +70,7 @@ export default function SignIn() {
         <View className="h-px bg-gray-300 flex-1" />
       </View>
 
-      <Pressable className="border border-blue-600  rounded-full px-6 py-3 w-full mt-4">
+      <Pressable className="border border-blue-200  rounded-full px-6 py-3 w-full mt-4 shadow-lg elevation-2">
         <Text className="text-center">Create new account</Text>
       </Pressable>
     </View>
