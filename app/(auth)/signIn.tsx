@@ -1,6 +1,13 @@
 // Sign In page
 import { useState } from "react";
-import { Alert, Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { useAuth } from "../_layout";
 import { signInWithEmail } from "../utils/firebaseConfig";
 
@@ -26,7 +33,7 @@ export default function SignIn() {
     );
   };
   return (
-    <View style={styles.container}>
+    <View className="px-6" style={styles.container}>
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
@@ -43,11 +50,29 @@ export default function SignIn() {
         secureTextEntry
         onChangeText={setPassword}
       />
-      <Button
-        title={loading ? "Logging in..." : "Login"}
+      <Pressable
+        className="bg-blue-600 rounded-full px-6 py-3 w-full"
         onPress={handleLogin}
         disabled={loading}
-      />
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel={loading ? "Logging in..." : "Login"}
+      >
+        <Text className="text-white text-center">
+          {loading ? "Logging in..." : "Login"}
+        </Text>
+      </Pressable>
+
+      <View className="flex-row mt-4 items-center w-full">
+        {/* // horizonal line */}
+        <View className="h-px bg-gray-300 flex-1" />
+        <Text className="mx-2 text-gray-500">Or</Text>
+        <View className="h-px bg-gray-300 flex-1" />
+      </View>
+
+      <Pressable className="border border-blue-600  rounded-full px-6 py-3 w-full mt-4">
+        <Text className="text-center">Create new account</Text>
+      </Pressable>
     </View>
   );
 }
@@ -66,7 +91,6 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    maxWidth: 320,
     padding: 12,
     borderWidth: 1,
     borderColor: "#ccc",
