@@ -70,8 +70,13 @@ export default function SignIn() {
         <View className="h-px bg-gray-300 flex-1" />
       </View>
 
-      <Pressable className="border border-blue-200  rounded-full px-6 py-3 w-full mt-4 shadow-lg elevation-2">
-        <Text className="text-center">Create new account</Text>
+      <Pressable
+        className="border border-blue-300 rounded-full px-6 py-3 w-full mt-4"
+        accessible={true}
+        accessibilityRole="button"
+        accessibilityLabel="Create new account"
+      >
+        <Text className="text-center text-blue-600">Create new account</Text>
       </Pressable>
     </View>
   );
