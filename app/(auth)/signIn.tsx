@@ -1,4 +1,5 @@
 // Sign In page
+import { router } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -32,6 +33,12 @@ export default function SignIn() {
       }
     );
   };
+
+  const handleSignUp = () => {
+    console.log("signup handler");
+    router.push("/(auth)/signUp");
+  };
+
   return (
     <View className="px-6" style={styles.container}>
       <Text style={styles.title}>Welcome back!</Text>
@@ -72,6 +79,7 @@ export default function SignIn() {
 
       <Pressable
         className="border border-blue-300 rounded-full px-6 py-3 w-full mt-4"
+        onPress={handleSignUp}
         accessible={true}
         accessibilityRole="button"
         accessibilityLabel="Create new account"
