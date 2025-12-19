@@ -1,21 +1,34 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 // Simple Hello World screen
 export default function HomeScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome</Text>
-      <Text style={styles.user}>User</Text>
-      <View style={styles.progressBox}>
-        <Text>Your Progress</Text>
-        <Text style={styles.progressText}>2/10</Text>
-        <Text style={styles.wordsLearned}>Words Learned</Text>
+    <View className="p-6 flex-1 justify-between">
+      <View className="top-0">
+        <View>
+          <Text className="pt-4 text-2xl">Hello Alex 👋</Text>
+          <Text>Ready to practice?</Text>
+        </View>
       </View>
       <View>
-        <Text className="font-bold bg-blue-500 mt-4 text-2xl">
-          Keep up the great work!
-        </Text>
+        <Text style={styles.welcome}>Welcome</Text>
+        <Text style={styles.user}>User</Text>
+        <View style={styles.progressBox}>
+          <Text>Your Progress</Text>
+          <Text style={styles.progressText}>2/10</Text>
+          <Text style={styles.wordsLearned}>Words Learned</Text>
+        </View>
+      </View>
+      <View>
+        <Pressable
+          className="bg-green-500 mt-6 p-4 rounded-lg"
+          onPress={() => alert("Button Pressed!")}
+        >
+          <Text className="text-white text-center font-bold">
+            Practice Pronunciation
+          </Text>
+        </Pressable>
       </View>
     </View>
   );
