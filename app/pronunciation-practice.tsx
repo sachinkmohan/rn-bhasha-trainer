@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { usePronunciationSession } from '@/hooks/usePronunciationSession';
 import { ScriptToggle } from '@/components/pronunciation/ScriptToggle';
@@ -117,7 +117,11 @@ export default function PronunciationPracticeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 p-4">
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header with toggle and progress */}
         <View className="flex-row items-center justify-between mb-4">
           <ScriptToggle
@@ -171,7 +175,7 @@ export default function PronunciationPracticeScreen() {
             isLastQuestion={isLastQuestion}
           />
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
