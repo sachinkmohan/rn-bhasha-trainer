@@ -8,12 +8,24 @@ interface ScriptToggleProps {
 }
 
 export function ScriptToggle({ currentScript, onToggle }: ScriptToggleProps) {
+  const handleManglishPress = () => {
+    if (currentScript !== 'manglish') {
+      onToggle();
+    }
+  };
+
+  const handleMalayalamPress = () => {
+    if (currentScript !== 'malayalam') {
+      onToggle();
+    }
+  };
+
   return (
     <View className="flex-row bg-gray-200 rounded-full p-1">
       <Pressable
-        onPress={currentScript === 'malayalam' ? onToggle : undefined}
+        onPress={handleManglishPress}
         className={`px-4 py-2 rounded-full ${
-          currentScript === 'manglish' ? 'bg-white shadow' : ''
+          currentScript === 'manglish' ? 'bg-white' : ''
         }`}
       >
         <Text
@@ -25,9 +37,9 @@ export function ScriptToggle({ currentScript, onToggle }: ScriptToggleProps) {
         </Text>
       </Pressable>
       <Pressable
-        onPress={currentScript === 'manglish' ? onToggle : undefined}
+        onPress={handleMalayalamPress}
         className={`px-4 py-2 rounded-full ${
-          currentScript === 'malayalam' ? 'bg-white shadow' : ''
+          currentScript === 'malayalam' ? 'bg-white' : ''
         }`}
       >
         <Text
@@ -35,7 +47,7 @@ export function ScriptToggle({ currentScript, onToggle }: ScriptToggleProps) {
             currentScript === 'malayalam' ? 'text-blue-600' : 'text-gray-500'
           }`}
         >
-          മലയാളം
+          Malayalam
         </Text>
       </Pressable>
     </View>
