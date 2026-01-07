@@ -1,5 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
 
 // Simple Hello World screen
 export default function HomeScreen() {
@@ -23,7 +24,7 @@ export default function HomeScreen() {
       <View>
         <Pressable
           className="bg-green-500 mt-6 p-4 rounded-lg"
-          onPress={() => alert("Button Pressed!")}
+          onPress={() => router.push("/pronunciation-practice")}
         >
           <Text className="text-white text-center font-bold">
             Practice Pronunciation
