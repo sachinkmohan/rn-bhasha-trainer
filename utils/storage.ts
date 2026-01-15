@@ -18,7 +18,15 @@ export function getWordState(correctCount: number): WordState {
 async function getData(): Promise<PersistedPracticeData> {
   try {
     const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-    return jsonValue != null ? JSON.parse(jsonValue) : defaultData;
+    if (jsonValue != null) {
+      const parsed = JSON.parse(jsonValue) as PersistedPracticeData;
+      // Ensure wordProgress has a default for older persisted data
+      return {
+        ...parsed,
+        wordProgress: parsed.wordProgress ?? {},
+      };
+    }
+    return defaultData;
   } catch {
     return defaultData;
   }

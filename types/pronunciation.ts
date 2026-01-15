@@ -69,5 +69,5 @@ export interface PersistedPracticeData {
     score: number;
     totalQuestions: number;
   }>;
-  wordProgress: Record<string, WordProgress>;
+  wordProgress?: Record<string, WordProgress>;
 }
