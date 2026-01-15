@@ -1,12 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PersistedPracticeData } from '@/types/pronunciation';
+import { PersistedPracticeData, WordProgress, WordState } from '@/types/pronunciation';
 
 const STORAGE_KEY = 'pronunciation_practice_data';
 
 const defaultData: PersistedPracticeData = {
   difficultWordIds: [],
   sessionHistory: [],
+  wordProgress: {},
 };
+
+export function getWordState(correctCount: number): WordState {
+  if (correctCount === 0) return 'new';
+  if (correctCount < 3) return 'learning';
+  return 'mastered';
+}
 
 async function getData(): Promise<PersistedPracticeData> {
   try {
@@ -63,6 +70,26 @@ export const PracticeStorage = {
   async clearDifficultWords(): Promise<void> {
     const data = await getData();
     data.difficultWordIds = [];
+    await saveData(data);
+  },
+
+  async getWordProgress(): Promise<Record<string, WordProgress>> {
+    const data = await getData();
+    return data.wordProgress ?? {};
+  },
+
+  async incrementWordProgress(wordId: string): Promise<void> {
+    const data = await getData();
+    if (!data.wordProgress) {
+      data.wordProgress = {};
+    }
+
+    const existing = data.wordProgress[wordId];
+    data.wordProgress[wordId] = {
+      wordId,
+      correctCount: (existing?.correctCount ?? 0) + 1,
+      lastPracticed: new Date().toISOString(),
+    };
     await saveData(data);
   },
 };

@@ -114,8 +114,11 @@ export function usePronunciationSession(
       const currentQuestion = session.questions[session.currentQuestionIndex];
       const isCorrect = selectedWordId === currentQuestion.correctWord.id;
 
-      // If wrong, add to difficult words
-      if (!isCorrect) {
+      if (isCorrect) {
+        // Track correct answer for word progress
+        await PracticeStorage.incrementWordProgress(currentQuestion.correctWord.id);
+      } else {
+        // If wrong, add to difficult words
         await PracticeStorage.addDifficultWord(currentQuestion.correctWord.id);
       }
 

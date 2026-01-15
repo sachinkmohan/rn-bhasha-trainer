@@ -1,24 +1,47 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useWordProgress } from "@/hooks/useWordProgress";
 
-// Simple Hello World screen
 export default function HomeScreen() {
+  const { newCount, learningCount, masteredCount, totalWords, refresh } =
+    useWordProgress();
+
+  // Refresh progress when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      refresh();
+    }, [refresh])
+  );
+
   return (
     <View className="p-6 flex-1 justify-between">
       <View className="top-0">
         <View>
-          <Text className="pt-4 text-2xl">Hello Alex 👋</Text>
+          <Text className="pt-4 text-2xl">Hello Alex</Text>
           <Text>Ready to practice?</Text>
         </View>
       </View>
       <View>
-        <Text style={styles.welcome}>Welcome</Text>
-        <Text style={styles.user}>User</Text>
         <View style={styles.progressBox}>
-          <Text>Your Progress</Text>
-          <Text style={styles.progressText}>2/10</Text>
-          <Text style={styles.wordsLearned}>Words Learned</Text>
+          <Text style={styles.progressLabel}>Your Progress</Text>
+          <Text style={styles.progressText}>
+            {masteredCount}/{totalWords}
+          </Text>
+          <Text style={styles.wordsLearned}>Words Mastered</Text>
+          <View style={styles.stateBreakdown}>
+            <Text style={styles.stateItem}>
+              <Text style={styles.newDot}>New: {newCount}</Text>
+            </Text>
+            <Text style={styles.stateSeparator}> | </Text>
+            <Text style={styles.stateItem}>
+              <Text style={styles.learningDot}>Learning: {learningCount}</Text>
+            </Text>
+            <Text style={styles.stateSeparator}> | </Text>
+            <Text style={styles.stateItem}>
+              <Text style={styles.masteredDot}>Mastered: {masteredCount}</Text>
+            </Text>
+          </View>
         </View>
       </View>
       <View>
@@ -36,43 +59,54 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f0f4ff",
-  },
-  welcome: {
-    color: "#2D5D7B",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  user: {
-    fontSize: 16,
-    color: "#4B7F52",
-  },
   progressBox: {
     marginTop: 20,
-    padding: 10,
+    padding: 16,
     borderWidth: 1,
     borderColor: "#737ae6ff",
     borderRadius: 12,
-    width: 220,
     alignItems: "center",
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
   },
+  progressLabel: {
+    fontSize: 14,
+    color: "#666",
+  },
   progressText: {
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: "bold",
-    marginTop: 5,
+    marginTop: 4,
+    color: "#22c55e",
   },
   wordsLearned: {
     fontSize: 14,
     color: "#555",
-    marginTop: 5,
+    marginTop: 4,
+  },
+  stateBreakdown: {
+    flexDirection: "row",
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "#eee",
+  },
+  stateItem: {
+    fontSize: 12,
+  },
+  stateSeparator: {
+    fontSize: 12,
+    color: "#ccc",
+  },
+  newDot: {
+    color: "#9ca3af",
+  },
+  learningDot: {
+    color: "#f59e0b",
+  },
+  masteredDot: {
+    color: "#22c55e",
   },
 });

@@ -51,6 +51,16 @@ export interface PracticeSession {
   isComplete: boolean;
 }
 
+// Individual word progress tracking
+export interface WordProgress {
+  wordId: string;
+  correctCount: number;
+  lastPracticed: string; // ISO date
+}
+
+// Word mastery state
+export type WordState = 'new' | 'learning' | 'mastered';
+
 // Persisted data structure for AsyncStorage
 export interface PersistedPracticeData {
   difficultWordIds: string[];
@@ -59,4 +69,5 @@ export interface PersistedPracticeData {
     score: number;
     totalQuestions: number;
   }>;
+  wordProgress: Record<string, WordProgress>;
 }
