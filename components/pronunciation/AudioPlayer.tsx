@@ -33,6 +33,12 @@ export function AudioPlayer({
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, [audioFile]);
 
   // Pulsing animation when playing
