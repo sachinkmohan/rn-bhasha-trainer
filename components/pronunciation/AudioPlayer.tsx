@@ -102,17 +102,16 @@ export function AudioPlayer({
       console.error('Error playing audio:', error);
       // Enable options even on error
       setIsPlaying(false);
-      setHasPlayed(true);
 
-      // Notify parent of error
       if (onError) {
         onError(error instanceof Error ? error : new Error('Audio playback failed'));
-      } else {
-        // Fallback: call completion if no error handler provided
-        setTimeout(() => {
-          onPlaybackComplete?.();
-        }, 1000);
       }
+
+      // Fallback: call completion
+      timeoutRef.current = setTimeout(() => {
+        onPlaybackComplete?.();
+        timeoutRef.current = null;
+      }, 1000);
     }
   };
 
