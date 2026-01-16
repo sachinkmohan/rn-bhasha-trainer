@@ -22,7 +22,7 @@ export function AudioPlayer({
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasPlayed, setHasPlayed] = useState(false);
-  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Reset state when audio file changes (new question)
   useEffect(() => {
