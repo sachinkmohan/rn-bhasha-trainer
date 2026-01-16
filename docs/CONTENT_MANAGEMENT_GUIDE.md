@@ -407,11 +407,13 @@ Create this reference while adding audio:
 
 To make audio actually play in the app, you'll need these code changes:
 
-### Step 6.1: Install expo-av
+### Step 6.1: Install expo-audio
 
 ```bash
-npx expo install expo-av
+npx expo install expo-audio
 ```
+
+**Note:** `expo-av` is now deprecated. Use `expo-audio` instead, which provides a simpler and more modern API.
 
 ### Step 6.2: Create Audio Utility
 
@@ -419,56 +421,44 @@ Create a new file `utils/audio.ts`:
 
 ```typescript
 // utils/audio.ts
-import { Audio } from 'expo-av';
+import { useAudioPlayer } from 'expo-audio';
 
 // Audio file imports (local storage approach)
+// All audio files are in assets/audio/confusing-pairs/
 const audioFiles: Record<string, any> = {
-  'aanu.mp3': require('@/assets/audio/words/aanu.mp3'),
-  'ithu.mp3': require('@/assets/audio/words/ithu.mp3'),
-  'athu.mp3': require('@/assets/audio/words/athu.mp3'),
-  'ente.mp3': require('@/assets/audio/words/ente.mp3'),
-  'enikku.mp3': require('@/assets/audio/words/enikku.mp3'),
+  'aaNu.mp3': require('@/assets/audio/confusing-pairs/aaNu.mp3'),
+  'ithu.mp3': require('@/assets/audio/confusing-pairs/ithu.mp3'),
+  'athu.mp3': require('@/assets/audio/confusing-pairs/athu.mp3'),
+  'ente.mp3': require('@/assets/audio/confusing-pairs/ente.mp3'),
+  'enikku.mp3': require('@/assets/audio/confusing-pairs/enikku.mp3'),
   // Add all your audio files here...
 };
 
-let currentSound: Audio.Sound | null = null;
-
-export async function playWordAudio(filename: string): Promise<void> {
-  try {
-    // Stop any currently playing audio
-    if (currentSound) {
-      await currentSound.unloadAsync();
-      currentSound = null;
-    }
-
-    const audioFile = audioFiles[filename];
-    if (!audioFile) {
-      console.warn(`Audio file not found: ${filename}`);
-      return;
-    }
-
-    const { sound } = await Audio.Sound.createAsync(audioFile);
-    currentSound = sound;
-    await sound.playAsync();
-
-    // Clean up when done
-    sound.setOnPlaybackStatusUpdate((status) => {
-      if (status.isLoaded && status.didJustFinish) {
-        sound.unloadAsync();
-        currentSound = null;
-      }
-    });
-  } catch (error) {
-    console.error('Error playing audio:', error);
+/**
+ * Get the audio source for a given filename
+ * @param filename - The audio filename (e.g., "ithu.mp3")
+ * @returns The audio source or null if not found
+ */
+export function getAudioSource(filename: string) {
+  const audioFile = audioFiles[filename];
+  if (!audioFile) {
+    console.warn(`Audio file not found: ${filename}`);
+    return null;
   }
+  return audioFile;
 }
 
-export async function stopAudio(): Promise<void> {
-  if (currentSound) {
-    await currentSound.stopAsync();
-    await currentSound.unloadAsync();
-    currentSound = null;
-  }
+/**
+ * Hook to play word audio using expo-audio
+ * Usage:
+ * ```tsx
+ * const player = useWordAudio('ithu.mp3');
+ * <Button onPress={() => player.play()} />
+ * ```
+ */
+export function useWordAudio(filename: string) {
+  const audioSource = getAudioSource(filename);
+  return useAudioPlayer(audioSource);
 }
 ```
 
@@ -478,48 +468,60 @@ Update `components/pronunciation/AudioPlayer.tsx` to use real audio:
 
 ```typescript
 // components/pronunciation/AudioPlayer.tsx
-import React, { useState } from 'react';
-import { Pressable, Text, View, ActivityIndicator } from 'react-native';
-import { playWordAudio } from '@/utils/audio';
+import React from 'react';
+import { View, Text, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useWordAudio } from '@/utils/audio';
 
 interface AudioPlayerProps {
-  audioFile?: string;  // e.g., "ithu.mp3"
+  audioFile?: string; // e.g., "ithu.mp3"
+  onPlay?: () => void;
+  disabled?: boolean;
 }
 
-export function AudioPlayer({ audioFile }: AudioPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+export function AudioPlayer({
+  audioFile,
+  onPlay,
+  disabled = false,
+}: AudioPlayerProps) {
+  const player = useWordAudio(audioFile || '');
 
-  const handlePlay = async () => {
-    if (!audioFile) {
-      console.warn('No audio file provided');
-      return;
-    }
+  const handlePlay = () => {
+    if (disabled || !audioFile) return;
 
-    setIsPlaying(true);
-    await playWordAudio(audioFile);
-
-    // Reset after approximate playback duration
-    setTimeout(() => setIsPlaying(false), 2000);
+    player.play();
+    onPlay?.();
   };
 
+  const isPlaying = player.playing;
+
   return (
-    <View className="items-center my-4">
+    <View className="items-center py-8">
       <Pressable
         onPress={handlePlay}
-        disabled={isPlaying}
-        className={`w-20 h-20 rounded-full items-center justify-center ${
-          isPlaying ? 'bg-blue-300' : 'bg-blue-500'
-        }`}
+        disabled={disabled || !audioFile}
+        className={`w-24 h-24 rounded-full items-center justify-center ${
+          isPlaying ? 'bg-blue-600' : 'bg-blue-500'
+        } ${disabled || !audioFile ? 'opacity-50' : ''}`}
       >
-        {isPlaying ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-white text-3xl">▶</Text>
-        )}
+        <Ionicons
+          name={isPlaying ? 'volume-high' : 'play'}
+          size={40}
+          color="white"
+        />
       </Pressable>
-      <Text className="mt-2 text-gray-600">
-        {audioFile ? 'Tap to hear' : 'Audio coming soon'}
+      <Text className="mt-4 text-gray-600 text-center">
+        {isPlaying
+          ? 'Playing...'
+          : audioFile
+            ? 'Tap to hear the word'
+            : 'Audio not available'}
       </Text>
+      {!audioFile && (
+        <Text className="mt-1 text-gray-400 text-sm text-center">
+          (Audio coming soon)
+        </Text>
+      )}
     </View>
   );
 }
@@ -531,7 +533,10 @@ In your practice screen, pass the audio filename:
 
 ```typescript
 // In pronunciation-practice.tsx or wherever AudioPlayer is used
-<AudioPlayer audioFile={currentQuestion?.correctWord.pronunciation} />
+<AudioPlayer
+  audioFile={currentQuestion?.correctWord.pronunciation}
+  disabled={phase === 'feedback'}
+/>
 ```
 
 ---
@@ -649,6 +654,18 @@ node scripts/generate-audio-imports.js
 
 ## Need Help?
 
-- **Expo AV Documentation**: https://docs.expo.dev/versions/latest/sdk/av/
+- **Expo Audio Documentation**: https://docs.expo.dev/versions/latest/sdk/audio/
 - **Audio Recording Tips**: Search "podcast recording basics" for general tips
 - **Malayalam Pronunciation**: Consider consulting native speakers for accuracy
+
+---
+
+## Migration Notes
+
+### expo-av → expo-audio
+
+If you see references to `expo-av` in older documentation or code, note that it has been deprecated in favor of `expo-audio`. Key differences:
+
+- **Old (expo-av)**: `import { Audio } from 'expo-av';` with `Audio.Sound.createAsync()`
+- **New (expo-audio)**: `import { useAudioPlayer } from 'expo-audio';` with hook-based API
+- **Benefits**: Simpler API, better React integration, improved performance
