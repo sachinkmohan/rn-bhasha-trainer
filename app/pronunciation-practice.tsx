@@ -113,7 +113,7 @@ export default function PronunciationPracticeScreen() {
   const shuffledOptions =
     currentQuestion.id.charCodeAt(currentQuestion.id.length - 1) % 2 === 0
       ? options
-      : options.reverse();
+      : [...options].reverse();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
