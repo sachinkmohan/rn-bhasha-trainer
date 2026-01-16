@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator, ScrollView, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, router } from 'expo-router';
-import { usePronunciationSession } from '@/hooks/usePronunciationSession';
-import { ScriptToggle } from '@/components/pronunciation/ScriptToggle';
-import { AudioPlayer } from '@/components/pronunciation/AudioPlayer';
-import { WordOption } from '@/components/pronunciation/WordOption';
-import { FeedbackCard } from '@/components/pronunciation/FeedbackCard';
-import { SessionResults } from '@/components/pronunciation/SessionResults';
+import { AudioPlayer } from "@/components/pronunciation/AudioPlayer";
+import { FeedbackCard } from "@/components/pronunciation/FeedbackCard";
+import { ScriptToggle } from "@/components/pronunciation/ScriptToggle";
+import { SessionResults } from "@/components/pronunciation/SessionResults";
+import { WordOption } from "@/components/pronunciation/WordOption";
+import { usePronunciationSession } from "@/hooks/usePronunciationSession";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
-type Phase = 'loading' | 'practice' | 'feedback' | 'results';
+type Phase = "loading" | "practice" | "feedback" | "results";
 
 export default function PronunciationPracticeScreen() {
   const { mode } = useLocalSearchParams<{ mode?: string }>();
-  const difficultMode = mode === 'difficult';
+  const difficultMode = mode === "difficult";
 
   const {
     session,
@@ -31,7 +38,7 @@ export default function PronunciationPracticeScreen() {
   } = usePronunciationSession({ difficultMode });
 
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
-  const [phase, setPhase] = useState<Phase>('loading');
+  const [phase, setPhase] = useState<Phase>("loading");
   const [hasHeardAudio, setHasHeardAudio] = useState(false);
   const [audioError, setAudioError] = useState<string | null>(null);
 
@@ -43,19 +50,19 @@ export default function PronunciationPracticeScreen() {
   // Update phase based on session state
   useEffect(() => {
     if (isLoading) {
-      setPhase('loading');
+      setPhase("loading");
     } else if (session?.isComplete) {
-      setPhase('results');
+      setPhase("results");
     } else if (hasAnswered) {
-      setPhase('feedback');
+      setPhase("feedback");
     } else if (session) {
-      setPhase('practice');
+      setPhase("practice");
     }
   }, [isLoading, session, hasAnswered]);
 
   const handleAudioError = (error: Error) => {
-    console.error('Audio playback error:', error);
-    setAudioError('Audio failed to play. You can still select an answer.');
+    console.error("Audio playback error:", error);
+    setAudioError("Audio failed to play. You can still select an answer.");
     // Enable options even on audio failure
     setHasHeardAudio(true);
   };
@@ -86,14 +93,14 @@ export default function PronunciationPracticeScreen() {
     setSelectedWordId(null);
     setHasHeardAudio(false);
     setAudioError(null);
-    router.replace('/pronunciation-practice?mode=difficult');
+    router.replace("/pronunciation-practice?mode=difficult");
   };
 
   const handleGoHome = () => {
     router.back();
   };
 
-  if (phase === 'loading' || !session) {
+  if (phase === "loading" || !session) {
     return (
       <SafeAreaView className="flex-1 bg-white items-center justify-center">
         <ActivityIndicator size="large" color="#3b82f6" />
@@ -102,7 +109,7 @@ export default function PronunciationPracticeScreen() {
     );
   }
 
-  if (phase === 'results') {
+  if (phase === "results") {
     return (
       <SafeAreaView className="flex-1 bg-white">
         <SessionResults
@@ -147,10 +154,12 @@ export default function PronunciationPracticeScreen() {
       {/* Scrollable content */}
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: 16 }}
+        contentContainerStyle={{
+          padding: 16,
+          paddingBottom: hasAnswered ? 80 : 16,
+        }}
         showsVerticalScrollIndicator={false}
       >
-
         {/* Mode indicator */}
         {difficultMode && (
           <View className="bg-orange-100 px-3 py-1 rounded-full self-start mb-4">
@@ -163,19 +172,20 @@ export default function PronunciationPracticeScreen() {
         {/* Audio Player */}
         <AudioPlayer
           audioFile={currentQuestion.correctWord.pronunciation}
-          disabled={phase === 'feedback'}
+          disabled={phase === "feedback"}
           onPlaybackComplete={() => setHasHeardAudio(true)}
           onError={handleAudioError}
         />
 
         {/* Audio Error Warning */}
-        {audioError && phase !== 'feedback' && (
+        {audioError && phase !== "feedback" && (
           <View className="bg-orange-50 border-2 border-orange-300 px-4 py-3 rounded-lg mb-4 mx-4">
             <Text className="text-orange-800 text-center text-sm font-semibold mb-2">
               ⚠️ {audioError}
             </Text>
             <Text className="text-orange-700 text-center text-xs">
-              You can try the audio button again, or proceed to select your answer.
+              You can try the audio button again, or proceed to select your
+              answer.
             </Text>
           </View>
         )}
@@ -212,7 +222,7 @@ export default function PronunciationPracticeScreen() {
         </View>
 
         {/* Feedback Card (shown after answer) */}
-        {phase === 'feedback' && currentAnswer && (
+        {phase === "feedback" && currentAnswer && (
           <FeedbackCard
             correctWord={currentQuestion.correctWord}
             wasCorrect={currentAnswer.isCorrect}
@@ -231,7 +241,7 @@ export default function PronunciationPracticeScreen() {
             className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
           >
             <Text className="text-white text-lg font-bold mr-2">
-              {isLastQuestion ? 'See Results' : 'Next Question'}
+              {isLastQuestion ? "See Results" : "Next Question"}
             </Text>
             <Ionicons name="arrow-forward" size={20} color="white" />
           </Pressable>

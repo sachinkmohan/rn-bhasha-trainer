@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Word, ScriptType } from '@/types/pronunciation';
+import { ScriptType, Word } from "@/types/pronunciation";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
 
 interface FeedbackCardProps {
   correctWord: Word;
@@ -24,32 +24,32 @@ export function FeedbackCard({
 }: FeedbackCardProps) {
   return (
     <View
-      className={`p-6 rounded-xl ${wasCorrect ? 'bg-green-50' : 'bg-orange-50'}`}
+      className={`p-6 rounded-xl ${wasCorrect ? "bg-green-50" : "bg-orange-50"}`}
     >
       <View className="flex-row items-center mb-4">
         <Ionicons
-          name={wasCorrect ? 'checkmark-circle' : 'information-circle'}
+          name={wasCorrect ? "checkmark-circle" : "information-circle"}
           size={28}
-          color={wasCorrect ? '#16a34a' : '#ea580c'}
+          color={wasCorrect ? "#16a34a" : "#ea580c"}
         />
         <Text
           className={`ml-2 text-lg font-bold ${
-            wasCorrect ? 'text-green-700' : 'text-orange-700'
+            wasCorrect ? "text-green-700" : "text-orange-700"
           }`}
         >
-          {wasCorrect ? 'Great job!' : 'Keep practicing!'}
+          {wasCorrect ? "Great job!" : "Keep practicing!"}
         </Text>
       </View>
 
       <View className="mb-4">
         <Text className="text-gray-600 mb-1">The word was:</Text>
         <Text className="text-2xl font-bold text-gray-900">
-          {scriptType === 'manglish'
+          {scriptType === "manglish"
             ? correctWord.word.inTranslit
             : correctWord.word.inNativeScript}
         </Text>
         <Text className="text-gray-500 mt-1">
-          {scriptType === 'manglish'
+          {scriptType === "manglish"
             ? correctWord.word.inNativeScript
             : correctWord.word.inTranslit}
         </Text>
@@ -60,7 +60,9 @@ export function FeedbackCard({
         <Text className="text-lg text-gray-900">{correctWord.meaning}</Text>
       </View>
 
-      <View className={`p-3 bg-white rounded-lg ${showActions ? 'mb-6' : 'mb-0'}`}>
+      <View
+        className={`p-3 bg-white rounded-lg ${showActions && onNext ? "mb-6" : "mb-0"}`}
+      >
         <Text className="text-gray-600 text-sm">
           <Text className="font-medium">Why these sound similar: </Text>
           {reason}
@@ -73,7 +75,7 @@ export function FeedbackCard({
           className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
         >
           <Text className="text-white font-bold text-lg mr-2">
-            {isLastQuestion ? 'See Results' : 'Next Question'}
+            {isLastQuestion ? "See Results" : "Next Question"}
           </Text>
           <Ionicons name="arrow-forward" size={20} color="white" />
         </Pressable>
