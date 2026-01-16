@@ -1,6 +1,7 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { router, useFocusEffect } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { useWordProgress } from "@/hooks/useWordProgress";
 
 export default function HomeScreen() {
@@ -15,11 +16,15 @@ export default function HomeScreen() {
   );
 
   return (
-    <View className="p-6 flex-1 justify-between">
+    <SafeAreaView className="flex-1 bg-gray-50">
+      <View className="p-6 flex-1 justify-between">
       <View className="top-0">
-        <View>
-          <Text className="pt-4 text-2xl">Hello Alex</Text>
-          <Text>Ready to practice?</Text>
+        <View className="bg-green-50 rounded-2xl px-6 py-8">
+          <View className="w-16 h-16 rounded-full bg-green-100 items-center justify-center mb-4">
+            <Ionicons name="hand-right" size={32} color="#22c55e" />
+          </View>
+          <Text className="text-4xl font-bold mb-2">Hello Alex</Text>
+          <Text className="text-lg text-gray-600">Welcome back! Let's continue learning Malayalam.</Text>
         </View>
       </View>
       <View>
@@ -55,6 +60,7 @@ export default function HomeScreen() {
         </Pressable>
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
