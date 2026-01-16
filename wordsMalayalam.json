@@ -183,14 +183,14 @@
     {
       "id": "38b5ad6e-2a6b-4889-9521-0a9ff77ae743",
       "word": {
-        "inTranslit": "karaNam",
+        "inTranslit": "kaaraNam",
         "inNativeScript": "കാരണം"
       },
       "meaning": "because",
       "figureOfSpeech": "conjunction",
       "examples": [
         {
-          "inTranslit": "joli karaNam njan ksheenithan aanu.",
+          "inTranslit": "joli kaaraNam njan ksheenithan aanu.",
           "translation": "I am tired because of work",
           "inNativeScript": "ജോലി കാരണം ഞാൻ ക്ഷീണിതൻ ആണ്"
         }
@@ -202,9 +202,9 @@
       "id": "7c4a8f3e-9b2d-4e1a-8c5f-6d3e2a1b9c8d",
       "word": {
         "inTranslit": "aana",
-        "inNativeScript": ""
+        "inNativeScript": "ആന"
       },
-      "meaning": "",
+      "meaning": "Elephant",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -214,9 +214,9 @@
       "id": "9d5b7e2c-4a3f-4d6b-9e8a-5f4c3d2e1a0b",
       "word": {
         "inTranslit": "eNeekku",
-        "inNativeScript": ""
+        "inNativeScript": "എണീക്ക്"
       },
-      "meaning": "",
+      "meaning": "mperative form of wake up in Malayalam. Wake up = ENeekkuka",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -226,9 +226,9 @@
       "id": "3e8a6f4d-2c5b-4e9a-8d7f-6e5c4d3a2b1c",
       "word": {
         "inTranslit": "karikkuka",
-        "inNativeScript": ""
+        "inNativeScript": " കരിക്കുക "
       },
-      "meaning": "",
+      "meaning": "to char",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -238,9 +238,9 @@
       "id": "6f9d8e7c-5b4a-4d3e-8c2f-7d6e5a4b3c2d",
       "word": {
         "inTranslit": "palam",
-        "inNativeScript": ""
+        "inNativeScript": "പാലം"
       },
-      "meaning": "",
+      "meaning": "Bridge",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -250,9 +250,9 @@
       "id": "8d7e6f5c-4b3a-4e2d-9c1f-8d7e6f5c4d3e",
       "word": {
         "inTranslit": "palli",
-        "inNativeScript": ""
+        "inNativeScript": "പല്ലി"
       },
-      "meaning": "",
+      "meaning": "Lizard",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -262,9 +262,9 @@
       "id": "5c4d3e2f-1a9b-4c8d-7e6f-5d4e3f2a1b0c",
       "word": {
         "inTranslit": "pani",
-        "inNativeScript": ""
+        "inNativeScript": "പനി "
       },
-      "meaning": "",
+      "meaning": "fever",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -274,9 +274,9 @@
       "id": "2a1b0c9d-8e7f-4d6c-5e4d-3f2e1a0b9c8d",
       "word": {
         "inTranslit": "pattikkuka",
-        "inNativeScript": ""
+        "inNativeScript": "പറ്റിക്കുക "
       },
-      "meaning": "",
+      "meaning": "To deceive someone",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -286,9 +286,9 @@
       "id": "9c8d7e6f-5d4e-4f3a-2b1c-0a9b8c7d6e5f",
       "word": {
         "inTranslit": "thuNi",
-        "inNativeScript": ""
+        "inNativeScript": "തുണി"
       },
-      "meaning": "",
+      "meaning": "Cloth",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -298,9 +298,9 @@
       "id": "7d6e5f4c-3d2e-4a1b-0c9d-8e7f6d5e4f3a",
       "word": {
         "inTranslit": "thunni",
-        "inNativeScript": ""
+        "inNativeScript": "തുന്നി "
       },
-      "meaning": "",
+      "meaning": "sew(past tense of sew)",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -310,33 +310,21 @@
       "id": "4e3f2a1b-0c9d-4e8f-7d6e-5f4d3e2a1b0c",
       "word": {
         "inTranslit": "ura",
-        "inNativeScript": ""
+        "inNativeScript": "ഉര"
       },
-      "meaning": "",
+      "meaning": "Scrub/Rub",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
       "pronunciation": "ura.mp3"
     },
     {
-      "id": "1b0c9d8e-7f6d-4e5a-3f2e-1a0b9c8d7e6f",
-      "word": {
-        "inTranslit": "enthu-2",
-        "inNativeScript": ""
-      },
-      "meaning": "",
-      "figureOfSpeech": "",
-      "examples": [],
-      "wordLevel": "",
-      "pronunciation": "enthu-2.mp3"
-    },
-    {
       "id": "8e7f6d5e-4f3a-4b2c-1d0e-9f8e7d6f5e4d",
       "word": {
         "inTranslit": "karaNam-2",
-        "inNativeScript": ""
+        "inNativeScript": "കരണം"
       },
-      "meaning": "",
+      "meaning": "cheek",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -345,10 +333,10 @@
     {
       "id": "5d4e3f2a-1b0c-4d9e-8f7d-6e5f4d3e2a1b",
       "word": {
-        "inTranslit": "paLLi-2",
-        "inNativeScript": ""
+        "inTranslit": "paLLi",
+        "inNativeScript": "പള്ളി"
       },
-      "meaning": "",
+      "meaning": "Church",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -357,10 +345,10 @@
     {
       "id": "3f2e1a0b-9c8d-4e7f-6d5e-4f3a2b1c0d9e",
       "word": {
-        "inTranslit": "paLam-2",
-        "inNativeScript": ""
+        "inTranslit": "paLam",
+        "inNativeScript": "പാളം"
       },
-      "meaning": "",
+      "meaning": "Track/Rail",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -369,10 +357,10 @@
     {
       "id": "0c9d8e7f-6d5e-4f4a-3b2c-1d0e9f8e7d6f",
       "word": {
-        "inTranslit": "paNi-2",
-        "inNativeScript": ""
+        "inTranslit": "paNi",
+        "inNativeScript": "പണി"
       },
-      "meaning": "",
+      "meaning": "work",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -381,10 +369,10 @@
     {
       "id": "9f8e7d6f-5e4d-4a3f-2b1c-0d9e8f7d6e5f",
       "word": {
-        "inTranslit": "peRu-2",
-        "inNativeScript": ""
+        "inTranslit": "peRu",
+        "inNativeScript": "പേറു"
       },
-      "meaning": "",
+      "meaning": "Delivering baby",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
@@ -393,10 +381,10 @@
     {
       "id": "6e5f4d3e-2a1b-4c0d-9e8f-7d6e5f4d3e2a",
       "word": {
-        "inTranslit": "uRa-2",
-        "inNativeScript": ""
+        "inTranslit": "uRa",
+        "inNativeScript": "ഉറ"
       },
-      "meaning": "",
+      "meaning": "Case(as in pillowcase)/Sheath",
       "figureOfSpeech": "",
       "examples": [],
       "wordLevel": "",
