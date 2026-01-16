@@ -235,7 +235,7 @@ export default function PronunciationPracticeScreen() {
 
       {/* Fixed bottom action button - only show after answer */}
       {hasAnswered && (
-        <View className="px-4 pb-4 pt-3 bg-white border-t border-gray-200">
+        <View className="px-4 pb-12 pt-3 bg-white border-t border-gray-200">
           <Pressable
             onPress={handleNext}
             className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
