@@ -19,7 +19,7 @@ export function SessionResults({
   onPracticeDifficult,
   hasDifficultWords,
 }: SessionResultsProps) {
-  const percentage = Math.round((score / total) * 100);
+  const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
 
   const getMessage = () => {
     if (percentage === 100) return "Perfect! You're a pronunciation pro!";
