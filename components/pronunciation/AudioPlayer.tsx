@@ -35,20 +35,6 @@ export function AudioPlayer({
     }
   }, [audioFile]);
 
-  // Track playing state from player
-  useEffect(() => {
-    if (player?.playing) {
-      setIsPlaying(true);
-    } else if (isPlaying && !player?.playing) {
-      // Just stopped playing
-      setIsPlaying(false);
-      if (hasPlayed) {
-        // Only call completion after first play finished
-        onPlaybackComplete?.();
-      }
-    }
-  }, [player?.playing, isPlaying, hasPlayed, onPlaybackComplete]);
-
   // Pulsing animation when playing
   useEffect(() => {
     if (isPlaying) {
