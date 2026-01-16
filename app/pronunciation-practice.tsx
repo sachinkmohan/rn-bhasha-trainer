@@ -31,6 +31,7 @@ export default function PronunciationPracticeScreen() {
 
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>('loading');
+  const [hasHeardAudio, setHasHeardAudio] = useState(false);
 
   // Start session on mount
   useEffect(() => {
@@ -58,18 +59,21 @@ export default function PronunciationPracticeScreen() {
 
   const handleNext = async () => {
     setSelectedWordId(null);
+    setHasHeardAudio(false); // Reset for next question
     await nextQuestion();
   };
 
   const handleRestart = () => {
     resetSession();
     setSelectedWordId(null);
+    setHasHeardAudio(false);
     startSession(session?.scriptType);
   };
 
   const handlePracticeDifficult = () => {
     resetSession();
     setSelectedWordId(null);
+    setHasHeardAudio(false);
     router.replace('/pronunciation-practice?mode=difficult');
   };
 
@@ -143,7 +147,26 @@ export default function PronunciationPracticeScreen() {
         )}
 
         {/* Audio Player */}
-        <AudioPlayer disabled={phase === 'feedback'} />
+        <AudioPlayer
+          audioFile={currentQuestion.correctWord.pronunciation}
+          disabled={phase === 'feedback'}
+          onPlaybackComplete={() => setHasHeardAudio(true)}
+        />
+
+        {/* Instructions - Always visible to prevent UI jump */}
+        <View className="bg-blue-50 px-4 py-3 rounded-lg mb-4 mx-4 min-h-[52px]">
+          {!hasHeardAudio && !hasAnswered ? (
+            <Text className="text-blue-800 text-center text-sm font-medium">
+              👆 Listen to the audio first before selecting an answer
+            </Text>
+          ) : hasHeardAudio && !hasAnswered ? (
+            <Text className="text-green-700 text-center text-sm font-medium">
+              ✓ Great! Now choose the word you heard
+            </Text>
+          ) : (
+            <View className="h-[20px]" />
+          )}
+        </View>
 
         {/* Word Options */}
         <View className="flex-row mb-6">
@@ -156,7 +179,7 @@ export default function PronunciationPracticeScreen() {
               isCorrect={word.id === currentQuestion.correctWord.id}
               showResult={hasAnswered}
               onSelect={() => handleSelectWord(word.id)}
-              disabled={hasAnswered}
+              disabled={hasAnswered || !hasHeardAudio}
             />
           ))}
         </View>
