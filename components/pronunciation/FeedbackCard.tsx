@@ -8,9 +8,9 @@ interface FeedbackCardProps {
   wasCorrect: boolean;
   reason: string;
   scriptType: ScriptType;
-  onNext: () => void;
-  onReplay: () => void;
-  isLastQuestion: boolean;
+  showActions?: boolean;
+  onNext?: () => void;
+  isLastQuestion?: boolean;
 }
 
 export function FeedbackCard({
@@ -18,9 +18,9 @@ export function FeedbackCard({
   wasCorrect,
   reason,
   scriptType,
+  showActions = true,
   onNext,
-  onReplay,
-  isLastQuestion,
+  isLastQuestion = false,
 }: FeedbackCardProps) {
   return (
     <View
@@ -60,32 +60,24 @@ export function FeedbackCard({
         <Text className="text-lg text-gray-900">{correctWord.meaning}</Text>
       </View>
 
-      <View className="mb-6 p-3 bg-white rounded-lg">
+      <View className={`p-3 bg-white rounded-lg ${showActions ? 'mb-6' : 'mb-0'}`}>
         <Text className="text-gray-600 text-sm">
           <Text className="font-medium">Why these sound similar: </Text>
           {reason}
         </Text>
       </View>
 
-      <View className="flex-row justify-between">
-        <Pressable
-          onPress={onReplay}
-          className="flex-row items-center px-4 py-3 bg-gray-200 rounded-lg"
-        >
-          <Ionicons name="play-circle" size={20} color="#4b5563" />
-          <Text className="ml-2 text-gray-700 font-medium">Replay</Text>
-        </Pressable>
-
+      {showActions && onNext && (
         <Pressable
           onPress={onNext}
-          className="flex-row items-center px-6 py-3 bg-blue-500 rounded-lg"
+          className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
         >
-          <Text className="text-white font-bold">
-            {isLastQuestion ? 'See Results' : 'Next'}
+          <Text className="text-white font-bold text-lg mr-2">
+            {isLastQuestion ? 'See Results' : 'Next Question'}
           </Text>
           <Ionicons name="arrow-forward" size={20} color="white" />
         </Pressable>
-      </View>
+      )}
     </View>
   );
 }

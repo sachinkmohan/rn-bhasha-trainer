@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, ActivityIndicator, ScrollView, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, router } from 'expo-router';
 import { usePronunciationSession } from '@/hooks/usePronunciationSession';
 import { ScriptToggle } from '@/components/pronunciation/ScriptToggle';
@@ -132,21 +133,23 @@ export default function PronunciationPracticeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      {/* Header with toggle and progress - fixed at top */}
+      <View className="px-4 pt-4 pb-2 flex-row items-center justify-between border-b border-gray-100">
+        <ScriptToggle
+          currentScript={session.scriptType}
+          onToggle={toggleScript}
+        />
+        <Text className="text-gray-600 font-medium">
+          {session.currentQuestionIndex + 1}/{session.questions.length}
+        </Text>
+      </View>
+
+      {/* Scrollable content */}
       <ScrollView
         className="flex-1"
-        contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
+        contentContainerStyle={{ padding: 16, paddingBottom: 16 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Header with toggle and progress */}
-        <View className="flex-row items-center justify-between mb-4">
-          <ScriptToggle
-            currentScript={session.scriptType}
-            onToggle={toggleScript}
-          />
-          <Text className="text-gray-600 font-medium">
-            {session.currentQuestionIndex + 1}/{session.questions.length}
-          </Text>
-        </View>
 
         {/* Mode indicator */}
         {difficultMode && (
@@ -215,14 +218,25 @@ export default function PronunciationPracticeScreen() {
             wasCorrect={currentAnswer.isCorrect}
             reason={currentQuestion.reason}
             scriptType={session.scriptType}
-            onNext={handleNext}
-            onReplay={() => {
-              // Mock replay - in the future, this would trigger audio
-            }}
-            isLastQuestion={isLastQuestion}
+            showActions={false}
           />
         )}
       </ScrollView>
+
+      {/* Fixed bottom action button - only show after answer */}
+      {hasAnswered && (
+        <View className="px-4 pb-4 pt-3 bg-white border-t border-gray-200">
+          <Pressable
+            onPress={handleNext}
+            className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
+          >
+            <Text className="text-white text-lg font-bold mr-2">
+              {isLastQuestion ? 'See Results' : 'Next Question'}
+            </Text>
+            <Ionicons name="arrow-forward" size={20} color="white" />
+          </Pressable>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
