@@ -32,6 +32,7 @@ export default function PronunciationPracticeScreen() {
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>('loading');
   const [hasHeardAudio, setHasHeardAudio] = useState(false);
+  const [audioError, setAudioError] = useState<string | null>(null);
 
   // Start session on mount
   useEffect(() => {
@@ -51,6 +52,13 @@ export default function PronunciationPracticeScreen() {
     }
   }, [isLoading, session, hasAnswered]);
 
+  const handleAudioError = (error: Error) => {
+    console.error('Audio playback error:', error);
+    setAudioError('Audio failed to play. You can still select an answer.');
+    // Enable options even on audio failure
+    setHasHeardAudio(true);
+  };
+
   const handleSelectWord = async (wordId: string) => {
     if (hasAnswered) return;
     setSelectedWordId(wordId);
@@ -60,6 +68,7 @@ export default function PronunciationPracticeScreen() {
   const handleNext = async () => {
     setSelectedWordId(null);
     setHasHeardAudio(false); // Reset for next question
+    setAudioError(null); // Reset error state
     await nextQuestion();
   };
 
@@ -67,6 +76,7 @@ export default function PronunciationPracticeScreen() {
     resetSession();
     setSelectedWordId(null);
     setHasHeardAudio(false);
+    setAudioError(null);
     startSession(session?.scriptType);
   };
 
@@ -74,6 +84,7 @@ export default function PronunciationPracticeScreen() {
     resetSession();
     setSelectedWordId(null);
     setHasHeardAudio(false);
+    setAudioError(null);
     router.replace('/pronunciation-practice?mode=difficult');
   };
 
@@ -151,7 +162,20 @@ export default function PronunciationPracticeScreen() {
           audioFile={currentQuestion.correctWord.pronunciation}
           disabled={phase === 'feedback'}
           onPlaybackComplete={() => setHasHeardAudio(true)}
+          onError={handleAudioError}
         />
+
+        {/* Audio Error Warning */}
+        {audioError && phase !== 'feedback' && (
+          <View className="bg-orange-50 border-2 border-orange-300 px-4 py-3 rounded-lg mb-4 mx-4">
+            <Text className="text-orange-800 text-center text-sm font-semibold mb-2">
+              ⚠️ {audioError}
+            </Text>
+            <Text className="text-orange-700 text-center text-xs">
+              You can try the audio button again, or proceed to select your answer.
+            </Text>
+          </View>
+        )}
 
         {/* Instructions - Always visible to prevent UI jump */}
         <View className="bg-blue-50 px-4 py-3 rounded-lg mb-4 mx-4 min-h-[52px]">

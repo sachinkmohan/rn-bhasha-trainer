@@ -7,6 +7,7 @@ interface AudioPlayerProps {
   audioFile?: string; // e.g., "ithu.mp3"
   onPlay?: () => void;
   onPlaybackComplete?: () => void;
+  onError?: (error: Error) => void;
   disabled?: boolean;
 }
 
@@ -14,6 +15,7 @@ export function AudioPlayer({
   audioFile,
   onPlay,
   onPlaybackComplete,
+  onError,
   disabled = false,
 }: AudioPlayerProps) {
   const player = useWordAudio(audioFile);
@@ -100,9 +102,17 @@ export function AudioPlayer({
       console.error('Error playing audio:', error);
       // Enable options even on error
       setIsPlaying(false);
-      setTimeout(() => {
-        onPlaybackComplete?.();
-      }, 1000);
+      setHasPlayed(true);
+
+      // Notify parent of error
+      if (onError) {
+        onError(error instanceof Error ? error : new Error('Audio playback failed'));
+      } else {
+        // Fallback: call completion if no error handler provided
+        setTimeout(() => {
+          onPlaybackComplete?.();
+        }, 1000);
+      }
     }
   };
 
