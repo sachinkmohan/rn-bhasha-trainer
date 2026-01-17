@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Word, ScriptType } from '@/types/pronunciation';
 
 interface WordOptionProps {
@@ -26,55 +26,92 @@ export function WordOption({
 
   const getBorderColor = () => {
     if (!showResult) {
-      return isSelected ? 'border-blue-500' : 'border-gray-300';
+      return isSelected ? '#3b82f6' : '#d1d5db';
     }
     if (isCorrect) {
-      return 'border-green-500';
+      return '#22c55e';
     }
     if (isSelected && !isCorrect) {
-      return 'border-red-500';
+      return '#ef4444';
     }
-    return 'border-gray-300';
+    return '#d1d5db';
   };
 
   const getBackgroundColor = () => {
     if (!showResult) {
-      return isSelected ? 'bg-blue-50' : 'bg-white';
+      return isSelected ? '#eff6ff' : '#ffffff';
     }
     if (isCorrect) {
-      return 'bg-green-50';
+      return '#f0fdf4';
     }
     if (isSelected && !isCorrect) {
-      return 'bg-red-50';
+      return '#fef2f2';
     }
-    return 'bg-white';
+    return '#ffffff';
   };
 
   return (
     <Pressable
       onPress={onSelect}
       disabled={disabled}
-      className={`flex-1 mx-2 p-6 rounded-xl border-2 ${getBorderColor()} ${getBackgroundColor()} ${
-        disabled ? 'opacity-70' : ''
-      }`}
+      style={[
+        styles.container,
+        { borderColor: getBorderColor(), backgroundColor: getBackgroundColor() },
+        disabled && styles.disabled,
+      ]}
     >
       <Text
-        className={`text-center text-xl font-semibold ${
-          scriptType === 'malayalam' ? 'text-2xl' : ''
-        }`}
+        style={[
+          styles.wordText,
+          scriptType === 'malayalam' && styles.wordTextMalayalam,
+        ]}
       >
         {displayText}
       </Text>
       {showResult && (
-        <View className="mt-2">
+        <View style={styles.resultContainer}>
           {isCorrect && (
-            <Text className="text-center text-green-600 text-sm">Correct!</Text>
+            <Text style={styles.correctText}>Correct!</Text>
           )}
           {isSelected && !isCorrect && (
-            <Text className="text-center text-red-600 text-sm">Incorrect</Text>
+            <Text style={styles.incorrectText}>Incorrect</Text>
           )}
         </View>
       )}
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginHorizontal: 8,
+    padding: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+  },
+  disabled: {
+    opacity: 0.7,
+  },
+  wordText: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  wordTextMalayalam: {
+    fontSize: 24,
+  },
+  resultContainer: {
+    marginTop: 8,
+  },
+  correctText: {
+    textAlign: 'center',
+    color: '#16a34a',
+    fontSize: 14,
+  },
+  incorrectText: {
+    textAlign: 'center',
+    color: '#dc2626',
+    fontSize: 14,
+  },
+});

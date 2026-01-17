@@ -12,6 +12,7 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -102,16 +103,16 @@ export default function PronunciationPracticeScreen() {
 
   if (phase === "loading" || !session) {
     return (
-      <SafeAreaView className="flex-1 bg-white items-center justify-center">
+      <SafeAreaView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#3b82f6" />
-        <Text className="mt-4 text-gray-600">Loading practice session...</Text>
+        <Text style={styles.loadingText}>Loading practice session...</Text>
       </SafeAreaView>
     );
   }
 
   if (phase === "results") {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView style={styles.container}>
         <SessionResults
           score={score}
           total={session.questions.length}
@@ -139,21 +140,21 @@ export default function PronunciationPracticeScreen() {
       : [...options].reverse();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView style={styles.container}>
       {/* Header with toggle and progress - fixed at top */}
-      <View className="px-4 pt-4 pb-2 flex-row items-center justify-between border-b border-gray-100">
+      <View style={styles.header}>
         <ScriptToggle
           currentScript={session.scriptType}
           onToggle={toggleScript}
         />
-        <Text className="text-gray-600 font-medium">
+        <Text style={styles.progressText}>
           {session.currentQuestionIndex + 1}/{session.questions.length}
         </Text>
       </View>
 
       {/* Scrollable content */}
       <ScrollView
-        className="flex-1"
+        style={styles.scrollView}
         contentContainerStyle={{
           padding: 16,
           paddingBottom: hasAnswered ? 80 : 16,
@@ -162,8 +163,8 @@ export default function PronunciationPracticeScreen() {
       >
         {/* Mode indicator */}
         {difficultMode && (
-          <View className="bg-orange-100 px-3 py-1 rounded-full self-start mb-4">
-            <Text className="text-orange-700 text-sm font-medium">
+          <View style={styles.modeIndicator}>
+            <Text style={styles.modeIndicatorText}>
               Reviewing Difficult Words
             </Text>
           </View>
@@ -179,11 +180,11 @@ export default function PronunciationPracticeScreen() {
 
         {/* Audio Error Warning */}
         {audioError && phase !== "feedback" && (
-          <View className="bg-orange-50 border-2 border-orange-300 px-4 py-3 rounded-lg mb-4 mx-4">
-            <Text className="text-orange-800 text-center text-sm font-semibold mb-2">
+          <View style={styles.audioErrorContainer}>
+            <Text style={styles.audioErrorTitle}>
               ⚠️ {audioError}
             </Text>
-            <Text className="text-orange-700 text-center text-xs">
+            <Text style={styles.audioErrorMessage}>
               You can try the audio button again, or proceed to select your
               answer.
             </Text>
@@ -191,22 +192,22 @@ export default function PronunciationPracticeScreen() {
         )}
 
         {/* Instructions - Always visible to prevent UI jump */}
-        <View className="bg-blue-50 px-4 py-3 rounded-lg mb-4 mx-4 min-h-[52px]">
+        <View style={styles.instructionsContainer}>
           {!hasHeardAudio && !hasAnswered ? (
-            <Text className="text-blue-800 text-center text-sm font-medium">
+            <Text style={styles.instructionTextBlue}>
               👆 Listen to the audio first before selecting an answer
             </Text>
           ) : hasHeardAudio && !hasAnswered ? (
-            <Text className="text-green-700 text-center text-sm font-medium">
+            <Text style={styles.instructionTextGreen}>
               ✓ Great! Now choose the word you heard
             </Text>
           ) : (
-            <View className="h-[20px]" />
+            <View style={styles.instructionSpacer} />
           )}
         </View>
 
         {/* Word Options */}
-        <View className="flex-row mb-6">
+        <View style={styles.optionsContainer}>
           {shuffledOptions.map((word) => (
             <WordOption
               key={word.id}
@@ -235,12 +236,12 @@ export default function PronunciationPracticeScreen() {
 
       {/* Fixed bottom action button - only show after answer */}
       {hasAnswered && (
-        <View className="px-4 pb-12 pt-3 bg-white border-t border-gray-200">
+        <View style={styles.bottomBar}>
           <Pressable
             onPress={handleNext}
-            className="w-full py-4 bg-blue-500 rounded-lg items-center flex-row justify-center"
+            style={styles.nextButton}
           >
-            <Text className="text-white text-lg font-bold mr-2">
+            <Text style={styles.nextButtonText}>
               {isLastQuestion ? "See Results" : "Next Question"}
             </Text>
             <Ionicons name="arrow-forward" size={20} color="white" />
@@ -250,3 +251,123 @@ export default function PronunciationPracticeScreen() {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loadingText: {
+    marginTop: 16,
+    color: "#4b5563",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff",
+  },
+  header: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: "#f3f4f6",
+  },
+  progressText: {
+    color: "#4b5563",
+    fontWeight: "500",
+  },
+  scrollView: {
+    flex: 1,
+  },
+  modeIndicator: {
+    backgroundColor: "#fed7aa",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 9999,
+    alignSelf: "flex-start",
+    marginBottom: 16,
+  },
+  modeIndicatorText: {
+    color: "#c2410c",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  audioErrorContainer: {
+    backgroundColor: "#fff7ed",
+    borderWidth: 2,
+    borderColor: "#fdba74",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    marginHorizontal: 16,
+  },
+  audioErrorTitle: {
+    color: "#92400e",
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "600",
+    marginBottom: 8,
+  },
+  audioErrorMessage: {
+    color: "#c2410c",
+    textAlign: "center",
+    fontSize: 12,
+  },
+  instructionsContainer: {
+    backgroundColor: "#eff6ff",
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    marginHorizontal: 16,
+    minHeight: 52,
+  },
+  instructionTextBlue: {
+    color: "#1e40af",
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  instructionTextGreen: {
+    color: "#15803d",
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  instructionSpacer: {
+    height: 20,
+  },
+  optionsContainer: {
+    flexDirection: "row",
+    marginBottom: 24,
+  },
+  bottomBar: {
+    paddingHorizontal: 16,
+    paddingBottom: 48,
+    paddingTop: 12,
+    backgroundColor: "#ffffff",
+    borderTopWidth: 1,
+    borderTopColor: "#e5e7eb",
+  },
+  nextButton: {
+    width: "100%",
+    paddingVertical: 16,
+    backgroundColor: "#3b82f6",
+    borderRadius: 8,
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  nextButtonText: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginRight: 8,
+  },
+});

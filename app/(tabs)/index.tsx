@@ -16,14 +16,14 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="p-6 flex-1 justify-between">
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
         <View>
-          <View className="bg-green-50 rounded-2xl px-6 py-8">
-            <Text className="text-4xl font-bold mb-2 mt-10">
+          <View style={styles.greetingBox}>
+            <Text style={styles.greetingText}>
               Hello <Ionicons name="hand-right" size={32} color="#ffd700" />
             </Text>
-            <Text className="text-lg text-gray-600">
+            <Text style={styles.welcomeText}>
               Welcome back! Let's continue learning Malayalam.
             </Text>
           </View>
@@ -54,12 +54,12 @@ export default function HomeScreen() {
             </View>
           </View>
         </View>
-        <View className="pb-6">
+        <View style={styles.buttonContainer}>
           <Pressable
-            className="bg-green-500 mt-6 p-4 mb-4 rounded-lg"
+            style={styles.practiceButton}
             onPress={() => router.push("/pronunciation-practice")}
           >
-            <Text className="text-white text-center font-bold">
+            <Text style={styles.practiceButtonText}>
               Practice Pronunciation
             </Text>
           </Pressable>
@@ -70,6 +70,31 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f9fafb",
+  },
+  content: {
+    padding: 24,
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  greetingBox: {
+    backgroundColor: "#f0fdf4",
+    borderRadius: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+  },
+  greetingText: {
+    fontSize: 36,
+    fontWeight: "bold",
+    marginBottom: 8,
+    marginTop: 40,
+  },
+  welcomeText: {
+    fontSize: 18,
+    color: "#4b5563",
+  },
   progressBox: {
     marginTop: 20,
     padding: 16,
@@ -119,5 +144,20 @@ const styles = StyleSheet.create({
   },
   masteredDot: {
     color: "#22c55e",
+  },
+  buttonContainer: {
+    paddingBottom: 24,
+  },
+  practiceButton: {
+    backgroundColor: "#22c55e",
+    marginTop: 24,
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 8,
+  },
+  practiceButtonText: {
+    color: "#ffffff",
+    textAlign: "center",
+    fontWeight: "bold",
   },
 });
