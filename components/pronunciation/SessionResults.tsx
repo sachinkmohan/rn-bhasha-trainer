@@ -53,7 +53,7 @@ export function SessionResults({
 
       <Text className="text-center text-gray-600 mb-8 px-4">{getMessage()}</Text>
 
-      <View className="w-full space-y-3">
+      <View className="w-full space-y-3 pb-8">
         <Pressable
           onPress={onRestart}
           className="w-full p-4 bg-blue-500 rounded-xl flex-row items-center justify-center"
