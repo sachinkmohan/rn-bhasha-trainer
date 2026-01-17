@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { ScriptType } from '@/types/pronunciation';
 
 interface ScriptToggleProps {
@@ -21,31 +21,35 @@ export function ScriptToggle({ currentScript, onToggle }: ScriptToggleProps) {
   };
 
   return (
-    <View className="flex-row bg-gray-200 rounded-full p-1">
+    <View style={styles.container}>
       <Pressable
         onPress={handleManglishPress}
-        className={`px-4 py-2 rounded-full ${
-          currentScript === 'manglish' ? 'bg-white' : ''
-        }`}
+        style={[
+          styles.button,
+          currentScript === 'manglish' && styles.buttonActive,
+        ]}
       >
         <Text
-          className={`font-medium ${
-            currentScript === 'manglish' ? 'text-blue-600' : 'text-gray-500'
-          }`}
+          style={[
+            styles.buttonText,
+            currentScript === 'manglish' ? styles.buttonTextActive : styles.buttonTextInactive,
+          ]}
         >
           Manglish
         </Text>
       </Pressable>
       <Pressable
         onPress={handleMalayalamPress}
-        className={`px-4 py-2 rounded-full ${
-          currentScript === 'malayalam' ? 'bg-white' : ''
-        }`}
+        style={[
+          styles.button,
+          currentScript === 'malayalam' && styles.buttonActive,
+        ]}
       >
         <Text
-          className={`font-medium ${
-            currentScript === 'malayalam' ? 'text-blue-600' : 'text-gray-500'
-          }`}
+          style={[
+            styles.buttonText,
+            currentScript === 'malayalam' ? styles.buttonTextActive : styles.buttonTextInactive,
+          ]}
         >
           Malayalam
         </Text>
@@ -53,3 +57,29 @@ export function ScriptToggle({ currentScript, onToggle }: ScriptToggleProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    backgroundColor: '#e5e7eb',
+    borderRadius: 9999,
+    padding: 4,
+  },
+  button: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 9999,
+  },
+  buttonActive: {
+    backgroundColor: '#ffffff',
+  },
+  buttonText: {
+    fontWeight: '500',
+  },
+  buttonTextActive: {
+    color: '#2563eb',
+  },
+  buttonTextInactive: {
+    color: '#6b7280',
+  },
+});
