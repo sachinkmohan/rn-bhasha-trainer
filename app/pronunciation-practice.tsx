@@ -171,9 +171,9 @@ export default function PronunciationPracticeScreen() {
         )}
 
         {/* Audio Player */}
+
         <AudioPlayer
           audioFile={currentQuestion.correctWord.pronunciation}
-          disabled={phase === "feedback"}
           onPlaybackComplete={() => setHasHeardAudio(true)}
           onError={handleAudioError}
         />
@@ -181,9 +181,7 @@ export default function PronunciationPracticeScreen() {
         {/* Audio Error Warning */}
         {audioError && phase !== "feedback" && (
           <View style={styles.audioErrorContainer}>
-            <Text style={styles.audioErrorTitle}>
-              ⚠️ {audioError}
-            </Text>
+            <Text style={styles.audioErrorTitle}>⚠️ {audioError}</Text>
             <Text style={styles.audioErrorMessage}>
               You can try the audio button again, or proceed to select your
               answer.
@@ -237,10 +235,7 @@ export default function PronunciationPracticeScreen() {
       {/* Fixed bottom action button - only show after answer */}
       {hasAnswered && (
         <View style={styles.bottomBar}>
-          <Pressable
-            onPress={handleNext}
-            style={styles.nextButton}
-          >
+          <Pressable onPress={handleNext} style={styles.nextButton}>
             <Text style={styles.nextButtonText}>
               {isLastQuestion ? "See Results" : "Next Question"}
             </Text>
