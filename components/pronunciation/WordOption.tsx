@@ -1,7 +1,7 @@
 import { ScriptType, Word } from "@/types/pronunciation";
 import { useWordAudio } from "@/utils/audio";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface WordOptionProps {
@@ -27,7 +27,30 @@ export function WordOption({
     scriptType === "manglish" ? word.word.inTranslit : word.word.inNativeScript;
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const player = useWordAudio(word.pronunciation);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handlePlayAudio = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsPlaying(true);
+    player?.seekTo(0);
+    player?.play();
+    const duration = player?.duration * 1000 || 1500; // Fallback to 1.5s if duration unknown
+    timeoutRef.current = setTimeout(() => {
+      setIsPlaying(false);
+    }, duration);
+  };
+
   const getBorderColor = () => {
     if (!showResult) {
       return isSelected ? "#3b82f6" : "#d1d5db";
@@ -86,12 +109,9 @@ export function WordOption({
       {showResult && (
         <Pressable
           style={styles.secondaryAudioButton}
-          onPress={() => {
-            setIsPlaying(true);
-            player?.seekTo(0);
-            player?.play();
-            setTimeout(() => setIsPlaying(false), 1500);
-          }}
+          accessibilityLabel="Playing the word's pronunciation"
+          accessibilityRole="button"
+          onPress={handlePlayAudio}
         >
           <Ionicons
             name="play-circle"
