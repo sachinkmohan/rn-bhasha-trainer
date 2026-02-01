@@ -32,12 +32,11 @@ export function WordOption({
 
   useEffect(() => {
     return () => {
-      player?.pause();
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [player]);
+  }, []);
 
   const handlePlayAudio = () => {
     if (!player) return;
