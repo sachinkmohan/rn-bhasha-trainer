@@ -32,20 +32,23 @@ export function WordOption({
 
   useEffect(() => {
     return () => {
+      player?.pause();
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, []);
+  }, [player]);
 
   const handlePlayAudio = () => {
+    if (!player) return;
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
     setIsPlaying(true);
-    player?.seekTo(0);
-    player?.play();
-    const duration = player?.duration * 1000 || 1500; // Fallback to 1.5s if duration unknown
+    player.seekTo(0);
+    player.play();
+    const duration = player.duration * 1000 || 1500; // Fallback to 1.5s if duration unknown
     timeoutRef.current = setTimeout(() => {
       setIsPlaying(false);
     }, duration);
@@ -109,7 +112,7 @@ export function WordOption({
       {showResult && (
         <Pressable
           style={styles.secondaryAudioButton}
-          accessibilityLabel="Playing the word's pronunciation"
+          accessibilityLabel="Play word pronunciation"
           accessibilityRole="button"
           onPress={handlePlayAudio}
         >
