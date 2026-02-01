@@ -44,13 +44,19 @@ export function WordOption({
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
-    setIsPlaying(true);
-    player.seekTo(0);
-    player.play();
-    const duration = player.duration * 1000 || 1500; // Fallback to 1.5s if duration unknown
-    timeoutRef.current = setTimeout(() => {
+
+    try {
+      setIsPlaying(true);
+      player.seekTo(0);
+      player.play();
+      const duration = player.duration * 1000 || 1500; // Fallback to 1.5s if duration unknown
+      timeoutRef.current = setTimeout(() => {
+        setIsPlaying(false);
+      }, duration);
+    } catch (error) {
       setIsPlaying(false);
-    }, duration);
+      console.warn("Error playing audio:", error);
+    }
   };
 
   const getBorderColor = () => {
