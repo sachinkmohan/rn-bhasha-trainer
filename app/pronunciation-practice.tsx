@@ -36,6 +36,7 @@ export default function PronunciationPracticeScreen() {
     score,
     hasAnswered,
     hasDifficultWords,
+    currentWordCorrectCount,
   } = usePronunciationSession({ difficultMode });
 
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
@@ -188,6 +189,10 @@ export default function PronunciationPracticeScreen() {
             </Text>
           </View>
         )}
+
+        <View>
+          <Text>Current Correct Word Count : {currentWordCorrectCount}</Text>
+        </View>
 
         {/* Instructions - Always visible to prevent UI jump */}
         <View style={styles.instructionsContainer}>
