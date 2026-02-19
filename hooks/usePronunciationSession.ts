@@ -114,6 +114,9 @@ export function usePronunciationSession(
           ? await PracticeStorage.getDifficultWords()
           : undefined;
 
+        const progress = await PracticeStorage.getWordProgress();
+        setWordProgress(progress);
+
         const questions = generateQuestions(questionCount, diffWords);
 
         setSession({
@@ -142,6 +145,18 @@ export function usePronunciationSession(
         await PracticeStorage.incrementWordProgress(
           currentQuestion.correctWord.id,
         );
+        setWordProgress((prev) => {
+          const wordId = currentQuestion.correctWord.id;
+          const existing = prev[wordId];
+          return {
+            ...prev,
+            [wordId]: {
+              wordId,
+              correctCount: (existing?.correctCount ?? 0) + 1,
+              lastPracticed: new Date().toISOString(),
+            },
+          };
+        });
       } else {
         // If wrong, add to difficult words
         await PracticeStorage.addDifficultWord(currentQuestion.correctWord.id);
