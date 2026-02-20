@@ -90,13 +90,11 @@ export function usePronunciationSession(
 
   // Load difficult words on mount
   useEffect(() => {
-    async function loadInitialWords() {
+    async function loadDifficultWords() {
       const diffWords = await PracticeStorage.getDifficultWords();
       setDifficultWordIds(diffWords);
-      const progress = await PracticeStorage.getWordProgress();
-      setWordProgress(progress);
     }
-    loadInitialWords();
+    loadDifficultWords();
   }, []);
 
   useEffect(() => {
