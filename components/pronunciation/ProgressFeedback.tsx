@@ -3,7 +3,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { StyleSheet, Text, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
 
-const ProgressFeedback = ({
+export const ProgressFeedback = ({
   wasCorrect,
   correctCount,
 }: {
@@ -27,7 +27,7 @@ const ProgressFeedback = ({
               autoStart={wasCorrect}
               fadeOut
             />
-            <Text>Word Mastered, added to Mastered list</Text>
+            <Text>Word Mastered, yaay!</Text>
             <MaterialIcons name="celebration" size={24} color="green" />
           </View>
         )}
@@ -35,8 +35,6 @@ const ProgressFeedback = ({
     </View>
   ) : null;
 };
-
-export { ProgressFeedback };
 
 const styles = StyleSheet.create({
   container: {

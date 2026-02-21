@@ -1,5 +1,6 @@
 import { AudioPlayer } from "@/components/pronunciation/AudioPlayer";
 import { FeedbackCard } from "@/components/pronunciation/FeedbackCard";
+import { MasteryProgressBadge } from "@/components/pronunciation/MasteryProgressBadge";
 import { ProgressFeedback } from "@/components/pronunciation/ProgressFeedback";
 import { ScriptToggle } from "@/components/pronunciation/ScriptToggle";
 import { SessionResults } from "@/components/pronunciation/SessionResults";
@@ -171,6 +172,10 @@ export default function PronunciationPracticeScreen() {
             </Text>
           </View>
         )}
+
+        {/* Mastery Progress Badge */}
+        <MasteryProgressBadge correctCount={currentWordCorrectCount ?? 0} />
+
         {/* Audio Player */}
         <AudioPlayer
           audioFile={currentQuestion.correctWord.pronunciation}
@@ -187,9 +192,6 @@ export default function PronunciationPracticeScreen() {
             </Text>
           </View>
         )}
-        <View>
-          <Text>Current Correct Word Count : {currentWordCorrectCount}</Text>
-        </View>
         {/* Instructions - Always visible to prevent UI jump */}
         <View style={styles.instructionsContainer}>
           {!hasHeardAudio && !hasAnswered ? (
