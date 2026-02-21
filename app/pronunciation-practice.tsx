@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingBottom: 48,
     paddingTop: 12,
     backgroundColor: "#ffffff",
     borderTopWidth: 1,
