@@ -239,6 +239,7 @@ export default function PronunciationPracticeScreen() {
           <ProgressFeedback
             wasCorrect={currentAnswer?.isCorrect ?? false}
             correctCount={currentWordCorrectCount ?? 0}
+            wordLabel={currentQuestion.correctWord.word.inTranslit}
           />
           <Pressable onPress={handleNext} style={styles.nextButton}>
             <Text style={styles.nextButtonText}>

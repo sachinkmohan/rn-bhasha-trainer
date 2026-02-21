@@ -6,28 +6,31 @@ import ConfettiCannon from "react-native-confetti-cannon";
 export const ProgressFeedback = ({
   wasCorrect,
   correctCount,
+  wordLabel,
 }: {
   wasCorrect: boolean;
   correctCount: number;
+  wordLabel: string;
 }) => {
+  const progressNotYetMasteredText = `${wordLabel}: ${correctCount}/3 correct toward mastery`;
+  const progressMasteredText = ` ${wordLabel}: Mastered ${correctCount} times!`;
+  const isNotYetMastered = correctCount > 0 && correctCount < 3;
+  const isMasteredMoreTimes = correctCount > 3;
+  const isMastered = correctCount === 3;
+
   return wasCorrect ? (
     <View style={styles.container}>
       <FontAwesome6 name="heart-circle-check" size={24} color="green" />
       <View>
-        {correctCount < 3 ? (
-          <Text>{correctCount}/3 correct toward mastery </Text>
-        ) : (
-          <Text>Mastered {correctCount} times!</Text>
-        )}
-        {correctCount === 3 && (
+        {isNotYetMastered ? (
+          <Text>{progressNotYetMasteredText}</Text>
+        ) : isMasteredMoreTimes ? (
+          <Text>{progressMasteredText}</Text>
+        ) : null}
+        {isMastered && (
           <View style={styles.masteredContainer}>
-            <ConfettiCannon
-              count={200}
-              origin={{ x: -30, y: 0 }}
-              autoStart={wasCorrect}
-              fadeOut
-            />
-            <Text>Word Mastered, yaay!</Text>
+            <ConfettiCannon count={200} origin={{ x: -30, y: 0 }} fadeOut />
+            <Text>{wordLabel}: Word Mastered, yaay!</Text>
             <MaterialIcons name="celebration" size={24} color="green" />
           </View>
         )}
