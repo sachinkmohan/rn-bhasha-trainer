@@ -81,13 +81,15 @@ export function usePronunciationSession(
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [difficultWordIds, setDifficultWordIds] = useState<string[]>([]);
-  const [currentWordCorrectCount, setCurrentWordCorrectCount] = useState(0);
   const currentQuestion =
     session?.questions[session.currentQuestionIndex] ?? null;
   const [wordProgress, setWordProgress] = useState<
     Record<string, WordProgress>
   >({});
 
+  const currentWordCorrectCount = currentQuestion
+    ? (wordProgress[currentQuestion.correctWord.id]?.correctCount ?? 0)
+    : 0;
   // Load difficult words on mount
   useEffect(() => {
     async function loadDifficultWords() {
@@ -96,13 +98,6 @@ export function usePronunciationSession(
     }
     loadDifficultWords();
   }, []);
-
-  useEffect(() => {
-    if (!currentQuestion) return;
-    const count =
-      wordProgress[currentQuestion.correctWord.id]?.correctCount ?? 0;
-    setCurrentWordCorrectCount(count);
-  }, [currentQuestion, wordProgress]);
 
   const startSession = useCallback(
     async (scriptType: ScriptType = "manglish") => {
