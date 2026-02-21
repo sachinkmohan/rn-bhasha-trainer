@@ -1,14 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import { confusablePairs } from "@/data/confusablePairs";
 import {
-  Word,
-  ScriptType,
-  PracticeQuestion,
   PracticeAnswer,
+  PracticeQuestion,
   PracticeSession,
-} from '@/types/pronunciation';
-import { confusablePairs } from '@/data/confusablePairs';
-import { PracticeStorage } from '@/utils/storage';
-import wordsData from '@/wordsMalayalam.json';
+  ScriptType,
+  Word,
+  WordProgress,
+} from "@/types/pronunciation";
+import { PracticeStorage } from "@/utils/storage";
+import wordsData from "@/wordsMalayalam.json";
+import { useCallback, useEffect, useState } from "react";
 
 const words: Word[] = wordsData.wordsMalayalam as Word[];
 
@@ -27,7 +28,7 @@ function shuffleArray<T>(array: T[]): T[] {
 
 function generateQuestions(
   count: number,
-  difficultWordIds?: string[]
+  difficultWordIds?: string[],
 ): PracticeQuestion[] {
   let availablePairs = [...confusablePairs];
 
@@ -36,13 +37,16 @@ function generateQuestions(
     availablePairs = availablePairs.filter(
       (pair) =>
         difficultWordIds.includes(pair.wordId) ||
-        difficultWordIds.includes(pair.confusableWordId)
+        difficultWordIds.includes(pair.confusableWordId),
     );
   }
 
   // Shuffle and take the required count
   const shuffledPairs = shuffleArray(availablePairs);
-  const selectedPairs = shuffledPairs.slice(0, Math.min(count, shuffledPairs.length));
+  const selectedPairs = shuffledPairs.slice(
+    0,
+    Math.min(count, shuffledPairs.length),
+  );
 
   return selectedPairs.map((pair, index) => {
     const correctWord = getWordById(pair.wordId);
@@ -70,26 +74,41 @@ interface UsePronunciationSessionOptions {
 }
 
 export function usePronunciationSession(
-  options: UsePronunciationSessionOptions = {}
+  options: UsePronunciationSessionOptions = {},
 ) {
   const { questionCount = 5, difficultMode = false } = options;
 
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [difficultWordIds, setDifficultWordIds] = useState<string[]>([]);
+  const currentQuestion =
+    session?.questions[session.currentQuestionIndex] ?? null;
+  const [wordProgress, setWordProgress] = useState<
+    Record<string, WordProgress>
+  >({});
 
+  const currentWordCorrectCount = currentQuestion
+    ? (wordProgress[currentQuestion.correctWord.id]?.correctCount ?? 0)
+    : 0;
   // Load difficult words on mount
   useEffect(() => {
-    PracticeStorage.getDifficultWords().then(setDifficultWordIds);
+    async function loadDifficultWords() {
+      const diffWords = await PracticeStorage.getDifficultWords();
+      setDifficultWordIds(diffWords);
+    }
+    loadDifficultWords();
   }, []);
 
   const startSession = useCallback(
-    async (scriptType: ScriptType = 'manglish') => {
+    async (scriptType: ScriptType = "manglish") => {
       setIsLoading(true);
       try {
         const diffWords = difficultMode
           ? await PracticeStorage.getDifficultWords()
           : undefined;
+
+        const progress = await PracticeStorage.getWordProgress();
+        setWordProgress(progress);
 
         const questions = generateQuestions(questionCount, diffWords);
 
@@ -104,19 +123,33 @@ export function usePronunciationSession(
         setIsLoading(false);
       }
     },
-    [questionCount, difficultMode]
+    [questionCount, difficultMode],
   );
 
   const submitAnswer = useCallback(
     async (selectedWordId: string) => {
       if (!session || session.isComplete) return;
+      if (!currentQuestion) return;
 
-      const currentQuestion = session.questions[session.currentQuestionIndex];
       const isCorrect = selectedWordId === currentQuestion.correctWord.id;
 
       if (isCorrect) {
         // Track correct answer for word progress
-        await PracticeStorage.incrementWordProgress(currentQuestion.correctWord.id);
+        await PracticeStorage.incrementWordProgress(
+          currentQuestion.correctWord.id,
+        );
+        setWordProgress((prev) => {
+          const wordId = currentQuestion.correctWord.id;
+          const existing = prev[wordId];
+          return {
+            ...prev,
+            [wordId]: {
+              wordId,
+              correctCount: (existing?.correctCount ?? 0) + 1,
+              lastPracticed: new Date().toISOString(),
+            },
+          };
+        });
       } else {
         // If wrong, add to difficult words
         await PracticeStorage.addDifficultWord(currentQuestion.correctWord.id);
@@ -138,7 +171,7 @@ export function usePronunciationSession(
 
       return isCorrect;
     },
-    [session]
+    [session],
   );
 
   const nextQuestion = useCallback(async () => {
@@ -168,7 +201,7 @@ export function usePronunciationSession(
       if (!prev) return null;
       return {
         ...prev,
-        scriptType: prev.scriptType === 'manglish' ? 'malayalam' : 'manglish',
+        scriptType: prev.scriptType === "manglish" ? "malayalam" : "manglish",
       };
     });
   }, []);
@@ -177,9 +210,8 @@ export function usePronunciationSession(
     setSession(null);
   }, []);
 
-  const currentQuestion = session?.questions[session.currentQuestionIndex];
   const currentAnswer = session?.answers.find(
-    (a) => a.questionId === currentQuestion?.id
+    (a) => a.questionId === currentQuestion?.id,
   );
   const score = session?.answers.filter((a) => a.isCorrect).length ?? 0;
   const hasAnswered = !!currentAnswer;
@@ -198,5 +230,6 @@ export function usePronunciationSession(
     hasAnswered,
     difficultWordIds,
     hasDifficultWords: difficultWordIds.length > 0,
+    currentWordCorrectCount,
   };
 }

@@ -1,5 +1,7 @@
 import { AudioPlayer } from "@/components/pronunciation/AudioPlayer";
 import { FeedbackCard } from "@/components/pronunciation/FeedbackCard";
+import { MasteryProgressBadge } from "@/components/pronunciation/MasteryProgressBadge";
+import { ProgressFeedback } from "@/components/pronunciation/ProgressFeedback";
 import { ScriptToggle } from "@/components/pronunciation/ScriptToggle";
 import { SessionResults } from "@/components/pronunciation/SessionResults";
 import { WordOption } from "@/components/pronunciation/WordOption";
@@ -36,6 +38,7 @@ export default function PronunciationPracticeScreen() {
     score,
     hasAnswered,
     hasDifficultWords,
+    currentWordCorrectCount,
   } = usePronunciationSession({ difficultMode });
 
   const [selectedWordId, setSelectedWordId] = useState<string | null>(null);
@@ -170,14 +173,15 @@ export default function PronunciationPracticeScreen() {
           </View>
         )}
 
-        {/* Audio Player */}
+        {/* Mastery Progress Badge */}
+        <MasteryProgressBadge correctCount={currentWordCorrectCount ?? 0} />
 
+        {/* Audio Player */}
         <AudioPlayer
           audioFile={currentQuestion.correctWord.pronunciation}
           onPlaybackComplete={() => setHasHeardAudio(true)}
           onError={handleAudioError}
         />
-
         {/* Audio Error Warning */}
         {audioError && phase !== "feedback" && (
           <View style={styles.audioErrorContainer}>
@@ -188,7 +192,6 @@ export default function PronunciationPracticeScreen() {
             </Text>
           </View>
         )}
-
         {/* Instructions - Always visible to prevent UI jump */}
         <View style={styles.instructionsContainer}>
           {!hasHeardAudio && !hasAnswered ? (
@@ -203,7 +206,6 @@ export default function PronunciationPracticeScreen() {
             <View style={styles.instructionSpacer} />
           )}
         </View>
-
         {/* Word Options */}
         <View style={styles.optionsContainer}>
           {shuffledOptions.map((word) => (
@@ -219,7 +221,6 @@ export default function PronunciationPracticeScreen() {
             />
           ))}
         </View>
-
         {/* Feedback Card (shown after answer) */}
         {phase === "feedback" && currentAnswer && (
           <FeedbackCard
@@ -235,6 +236,11 @@ export default function PronunciationPracticeScreen() {
       {/* Fixed bottom action button - only show after answer */}
       {hasAnswered && (
         <View style={styles.bottomBar}>
+          <ProgressFeedback
+            wasCorrect={currentAnswer?.isCorrect ?? false}
+            correctCount={currentWordCorrectCount ?? 0}
+            wordLabel={currentQuestion.correctWord.word.inTranslit}
+          />
           <Pressable onPress={handleNext} style={styles.nextButton}>
             <Text style={styles.nextButtonText}>
               {isLastQuestion ? "See Results" : "Next Question"}
@@ -344,7 +350,7 @@ const styles = StyleSheet.create({
   },
   bottomBar: {
     paddingHorizontal: 16,
-    paddingBottom: 48,
+    paddingBottom: 24,
     paddingTop: 12,
     backgroundColor: "#ffffff",
     borderTopWidth: 1,

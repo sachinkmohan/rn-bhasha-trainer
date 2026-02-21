@@ -8,6 +8,7 @@
     "scheme": "bhashasakhi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "updates": {
       "checkAutomatically": "NEVER"
     },

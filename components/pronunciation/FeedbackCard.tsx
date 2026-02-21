@@ -67,7 +67,9 @@ export function FeedbackCard({
       <View
         style={[
           styles.reasonContainer,
-          showActions && onNext ? styles.reasonContainerWithAction : styles.reasonContainerNoAction,
+          showActions && onNext
+            ? styles.reasonContainerWithAction
+            : styles.reasonContainerNoAction,
         ]}
       >
         <Text style={styles.reasonText}>
@@ -77,10 +79,7 @@ export function FeedbackCard({
       </View>
 
       {showActions && onNext && (
-        <Pressable
-          onPress={onNext}
-          style={styles.nextButton}
-        >
+        <Pressable onPress={onNext} style={styles.nextButton}>
           <Text style={styles.nextButtonText}>
             {isLastQuestion ? "See Results" : "Next Question"}
           </Text>
@@ -97,50 +96,50 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   containerCorrect: {
-    backgroundColor: '#f0fdf4',
+    backgroundColor: "#f0fdf4",
   },
   containerIncorrect: {
-    backgroundColor: '#fff7ed',
+    backgroundColor: "#fff7ed",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 16,
   },
   headerText: {
     marginLeft: 8,
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   headerTextCorrect: {
-    color: '#15803d',
+    color: "#15803d",
   },
   headerTextIncorrect: {
-    color: '#c2410c',
+    color: "#c2410c",
   },
   section: {
     marginBottom: 16,
   },
   label: {
-    color: '#4b5563',
+    color: "#4b5563",
     marginBottom: 4,
   },
   wordText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
+    fontWeight: "bold",
+    color: "#111827",
   },
   alternateText: {
-    color: '#6b7280',
+    color: "#6b7280",
     marginTop: 4,
   },
   meaningText: {
     fontSize: 18,
-    color: '#111827',
+    color: "#111827",
   },
   reasonContainer: {
     padding: 12,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 8,
   },
   reasonContainerWithAction: {
@@ -150,24 +149,24 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   reasonText: {
-    color: '#4b5563',
+    color: "#4b5563",
     fontSize: 14,
   },
   reasonBold: {
-    fontWeight: '500',
+    fontWeight: "500",
   },
   nextButton: {
-    width: '100%',
+    width: "100%",
     paddingVertical: 16,
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     borderRadius: 8,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   nextButtonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 18,
     marginRight: 8,
   },
