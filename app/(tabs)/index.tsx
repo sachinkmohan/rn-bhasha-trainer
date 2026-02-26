@@ -12,7 +12,7 @@ export default function HomeScreen() {
   useFocusEffect(
     React.useCallback(() => {
       refresh();
-    }, [refresh])
+    }, [refresh]),
   );
 
   return (
@@ -46,11 +46,18 @@ export default function HomeScreen() {
                 </Text>
               </Text>
               <Text style={styles.stateSeparator}> | </Text>
-              <Text style={styles.stateItem}>
-                <Text style={styles.masteredDot}>
-                  Mastered: {masteredCount}
+              <Pressable>
+                <Text
+                  style={[
+                    styles.stateItem,
+                    { textDecorationLine: "underline" },
+                  ]}
+                >
+                  <Text style={styles.masteredDot}>
+                    Mastered: {masteredCount}
+                  </Text>
                 </Text>
-              </Text>
+              </Pressable>
             </View>
           </View>
         </View>
