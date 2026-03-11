@@ -46,7 +46,7 @@ export default function HomeScreen() {
                 </Text>
               </Text>
               <Text style={styles.stateSeparator}> | </Text>
-              <Pressable>
+              <Pressable onPress={() => router.push("/mastered-words")}>
                 <Text
                   style={[
                     styles.stateItem,
