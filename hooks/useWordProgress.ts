@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { PracticeStorage, getWordState } from '@/utils/storage';
-import { WordState } from '@/types/pronunciation';
-import wordsData from '@/wordsMalayalam.json';
+import { WordState } from "@/types/pronunciation";
+import { PracticeStorage, getWordState } from "@/utils/storage";
+import wordsData from "@/wordsMalayalam.json";
+import { useCallback, useEffect, useState } from "react";
 
 interface WordProgressStats {
   newCount: number;
@@ -38,13 +38,13 @@ export function useWordProgress(): WordProgressStats {
         const state: WordState = getWordState(correctCount);
 
         switch (state) {
-          case 'new':
+          case "new":
             newCount++;
             break;
-          case 'learning':
+          case "learning":
             learningCount++;
             break;
-          case 'mastered':
+          case "mastered":
             masteredCount++;
             break;
         }
@@ -52,7 +52,7 @@ export function useWordProgress(): WordProgressStats {
 
       setStats({ newCount, learningCount, masteredCount });
     } catch (error) {
-      console.error('Failed to load word progress:', error);
+      console.error("Failed to load word progress:", error);
     } finally {
       setIsLoading(false);
     }
