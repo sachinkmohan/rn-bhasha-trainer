@@ -1,40 +1,28 @@
 import { useMasteredWords } from "@/hooks/useMasteredWords";
-import Entypo from "@expo/vector-icons/Entypo";
-import { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 export default function MasteredWordsScreen() {
   const { masteredWords, isLoading } = useMasteredWords();
-  const [expandedId, setExpandedID] = useState<string | null>(null);
 
-  function handlePress(wordId: string) {
-    if (expandedId === wordId) {
-      setExpandedID(null);
-      console.log("expandedID", expandedId);
-    } else {
-      setExpandedID(wordId);
-      console.log("else expandedID", expandedId);
-    }
-  }
   return (
     <View style={styles.container}>
       <FlatList
         data={masteredWords}
         renderItem={({ item }) => {
-          const isExpanded = expandedId === item.id;
           return (
             <View style={styles.itemRow}>
-              <Pressable onPress={() => handlePress(item.id)}>
-                <View style={styles.itemRowHeader}>
-                  <Text>{item.word.inTranslit}</Text>
-                  <Entypo name="chevron-small-down" size={24} color="black" />
-                </View>
-              </Pressable>
-              {isExpanded && (
-                <View>
-                  <Text>MALAYALAM: {item.word.inNativeScript}</Text>
-                  <Text>MEANING: {item.meaning}</Text>
-                </View>
-              )}
+              <View style={styles.itemRowHeader}>
+                <Text style={styles.itemRowHeaderText}>
+                  {item.word.inTranslit}
+                </Text>
+              </View>
+              <View style={styles.itemRowBody}>
+                <Text style={styles.itemRowBodyNative}>
+                  {" "}
+                  {item.word.inNativeScript}
+                </Text>
+                <Text>|</Text>
+                <Text style={styles.itemRowBodyMeaning}> {item.meaning}</Text>
+              </View>
             </View>
           );
         }}
@@ -58,5 +46,20 @@ const styles = StyleSheet.create({
   itemRowHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  itemRowHeaderText: {
+    fontSize: 20,
+    fontWeight: "600",
+  },
+  itemRowBody: {
+    marginTop: 8,
+    flexDirection: "row",
+    gap: 8,
+  },
+  itemRowBodyNative: {
+    fontWeight: "600",
+  },
+  itemRowBodyMeaning: {
+    color: "#555",
   },
 });
