@@ -20,10 +20,10 @@ Primary source: <a href="https://developer.mozilla.org/en-US/docs/Glossary/Callb
 
 <pre><code>function greet(name, onDone) {
   console.log("Hi " + name);
-  onDone(); // <- the receiver decides when to call it
+  onDone(); // &lt;- the receiver decides when to call it
 }
 
-greet("Sachin", () => console.log("greeting finished"));</code></pre>
+greet("Sachin", () =&gt; console.log("greeting finished"));</code></pre>
 
 <p><code>onDone</code> is a callback. <code>greet</code> didn't define what it does — the <em>caller</em> of <code>greet</code> did. <code>greet</code> just promised to call it at some point.</p>
 
@@ -39,20 +39,20 @@ Primary source: <a href="https://legacy.reactjs.org/docs/faq-functions.html" tar
 
 <pre><code>interface AudioPlayerProps {
   audioFile?: string;
-  onPlay?: () => void;
-  onPlaybackComplete?: () => void;
-  onError?: (error: Error) => void;
+  onPlay?: () =&gt; void;
+  onPlaybackComplete?: () =&gt; void;
+  onError?: (error: Error) =&gt; void;
   disabled?: boolean;
 }
 
 export function AudioPlayer({ audioFile, onPlay, onPlaybackComplete, onError, disabled }: AudioPlayerProps) {
   ...
-  const handlePlay = () => {
+  const handlePlay = () =&gt; {
     ...
     player.play();
     onPlay?.();          // line 84 — AudioPlayer invokes the callback it was handed
     ...
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = setTimeout(() =&gt; {
       onPlaybackComplete?.();  // line 90 — same idea, later
       ...
     }, 2500);

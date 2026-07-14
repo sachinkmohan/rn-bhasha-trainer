@@ -10,9 +10,9 @@ export function useMasteredWords() {
     try {
       setIsLoading(true);
       const wordProgress = await PracticeStorage.getWordProgress();
-      const filteredWords = wordsMalayalam.wordsMalayalam.filter((words) => {
-        const progressIDs = wordProgress[words.id];
-        const masteredState = getWordState(progressIDs?.correctCount || 0);
+      const filteredWords = wordsMalayalam.wordsMalayalam.filter((word) => {
+        const progress = wordProgress[word.id];
+        const masteredState = getWordState(progress?.correctCount || 0);
         return masteredState === "mastered";
       });
       setMasteredWords(filteredWords);

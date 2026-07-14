@@ -11,7 +11,7 @@ export function PlayAudioButton({ audioFile }: PlayAudioButtonProps) {
   useAudioPlayerStatus(player);
 
   const displayPlayableIcon = () => {
-    if (player.playing) return "volume-high";
+    if (player?.playing) return "volume-high";
     return "play";
   };
 

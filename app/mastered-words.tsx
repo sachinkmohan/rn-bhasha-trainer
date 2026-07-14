@@ -1,9 +1,23 @@
 import { PlayAudioButton } from "@/components/pronunciation/PlayAudioButton";
 import { useMasteredWords } from "@/hooks/useMasteredWords";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 export default function MasteredWordsScreen() {
   const { masteredWords, isLoading } = useMasteredWords();
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
