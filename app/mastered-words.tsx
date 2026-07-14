@@ -1,5 +1,7 @@
+import { PlayAudioButton } from "@/components/pronunciation/PlayAudioButton";
 import { useMasteredWords } from "@/hooks/useMasteredWords";
 import { FlatList, StyleSheet, Text, View } from "react-native";
+
 export default function MasteredWordsScreen() {
   const { masteredWords, isLoading } = useMasteredWords();
 
@@ -9,19 +11,22 @@ export default function MasteredWordsScreen() {
         data={masteredWords}
         renderItem={({ item }) => {
           return (
-            <View style={styles.itemRow}>
-              <View style={styles.itemRowHeader}>
-                <Text style={styles.itemRowHeaderText}>
-                  {item.word.inTranslit}
-                </Text>
-              </View>
-              <View style={styles.itemRowBody}>
-                <Text style={styles.itemRowBodyNative}>
-                  {" "}
-                  {item.word.inNativeScript}
-                </Text>
-                <Text>|</Text>
-                <Text style={styles.itemRowBodyMeaning}> {item.meaning}</Text>
+            <View style={styles.itemContainer}>
+              <PlayAudioButton audioFile={item.pronunciation} />
+              <View style={styles.itemRow}>
+                <View style={styles.itemRowHeader}>
+                  <Text style={styles.itemRowHeaderText}>
+                    {item.word.inTranslit}
+                  </Text>
+                </View>
+                <View style={styles.itemRowBody}>
+                  <Text style={styles.itemRowBodyNative}>
+                    {" "}
+                    {item.word.inNativeScript}
+                  </Text>
+                  <Text>|</Text>
+                  <Text style={styles.itemRowBodyMeaning}> {item.meaning}</Text>
+                </View>
               </View>
             </View>
           );
@@ -37,6 +42,11 @@ const styles = StyleSheet.create({
     margin: 16,
     flex: 1,
     paddingBottom: 8,
+  },
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
   },
   itemRow: {
     borderBottomWidth: 1,
