@@ -1,5 +1,7 @@
 import { PlayAudioButton } from "@/components/pronunciation/PlayAudioButton";
 import { useMasteredWords } from "@/hooks/useMasteredWords";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -9,7 +11,14 @@ import {
 } from "react-native";
 
 export default function MasteredWordsScreen() {
-  const { masteredWords, isLoading } = useMasteredWords();
+  const { masteredWords, isLoading, getMasteredWords } = useMasteredWords();
+
+  // Refresh mastered words when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      getMasteredWords();
+    }, [getMasteredWords]),
+  );
 
   if (isLoading) {
     return (
