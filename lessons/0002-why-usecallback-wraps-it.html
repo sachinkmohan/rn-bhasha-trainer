@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 2: Why useCallback Wraps It</title>
+<link rel="stylesheet" href="../teach-assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0002 · Callbacks</div>
+<h1>Why useCallback Wraps It</h1>
+
+<p>&larr; <a href="0001-what-is-a-callback.html">Lesson 1: What Is a Callback?</a> established the core idea: a callback is a function you hand to something else, which calls it later, at a moment of its choosing. This lesson is about a new wrinkle: <strong>how does the "something else" know when to call your function again versus reuse what it already has?</strong></p>
+
+<h2>The code that raised the question</h2>
+
+<p>You just added this to <code>app/mastered-words.tsx</code>:</p>
+
+<pre><code>useFocusEffect(
+  useCallback(() =&gt; {
+    getMasteredWords();
+  }, [getMasteredWords]),
+);</code></pre>
+
+<p><code>useFocusEffect</code> is a callback receiver, same shape as the callback props from Lesson 1 — you hand it a function, it decides when to call it (specifically: whenever this screen becomes the focused one). But notice it's not just handed a plain function — that function is wrapped in <code>useCallback</code> first. Why the extra layer?</p>
+
+<h2>The problem: functions are recreated every render</h2>
+
+<p>Every time a component function runs again (a re-render), any <code>() =&gt; {}</code> written directly inside it is a <strong>brand new function object</strong> in memory — even if the code inside looks byte-for-byte identical to the previous render's version. JavaScript doesn't consider two structurally identical functions "the same"; it compares them by reference.</p>
+
+<pre><code>const a = () =&gt; {};
+const b = () =&gt; {};
+console.log(a === b); // false — different objects, identical code</code></pre>
+
+<p><code>useFocusEffect</code> needs to know whether the function you gave it this render is "the same one as last time" or "a new one." It figures that out the same way <code>useEffect</code> does: by comparing references. If you hand it a fresh function reference every render (because you never wrapped it), it looks new every single time — so the effect re-runs far more often than you want.</p>
+
+<div class="source">
+Primary source: <a href="https://reactnavigation.org/docs/use-focus-effect/" target="_blank">React Navigation docs — useFocusEffect</a> — "it's important to wrap the callback in <code>useCallback</code> to avoid running the effect too often."
+</div>
+
+<h2>What useCallback actually gives you</h2>
+
+<p><code>useCallback(fn, deps)</code> doesn't change what <code>fn</code> does. It changes whether React hands back the <em>same reference</em> across renders. As long as everything in <code>deps</code> is unchanged since last render, <code>useCallback</code> returns the exact same function object it returned before — not a new one. That stable reference is what lets <code>useFocusEffect</code> correctly conclude "nothing changed, no need to re-run."</p>
+
+<div class="callout">
+<strong>The key move:</strong> <code>useCallback</code> is a promise about <em>identity</em>, not a promise about <em>behavior</em>. The function still does the same thing either way — wrapping it only affects whether <code>===</code> comparisons across renders say "same" or "different."
+</div>
+
+<h2>The classic example, simplified</h2>
+
+<p><code>useFocusEffect</code> is one consumer of a stable reference, but it's not the example most people learn <code>useCallback</code> from. The textbook case (react.dev uses a checkout-form version — this is the same mechanism, stripped to the smallest possible shape) is: a component with <em>two unrelated pieces of state</em>, where changing one shouldn't cause a child to re-render.</p>
+
+<pre><code>function Screen() {
+  const [count, setCount] = useState(0);
+  const [text, setText] = useState("");
+
+  // Without useCallback: a NEW function object every render of Screen
+  const handleClick = () =&gt; setCount(count + 1);
+
+  return (
+    &lt;&gt;
+      {/* typing here re-renders Screen — count didn't change, only text did */}
+      &lt;TextInput value={text} onChangeText={setText} /&gt;
+      &lt;ClickButton onClick={handleClick} /&gt;
+    &lt;/&gt;
+  );
+}
+
+const ClickButton = memo(function ClickButton({ onClick }) {
+  console.log("ClickButton rendered"); // watch this fire on every keystroke
+  return &lt;Pressable onPress={onClick}&gt;&lt;Text&gt;Click me&lt;/Text&gt;&lt;/Pressable&gt;;
+});</code></pre>
+
+<p><code>ClickButton</code> is wrapped in <code>memo</code>, which tells React "skip re-rendering me if my props are all the same as last time." But every keystroke in the text field re-renders <code>Screen</code> — and every render of <code>Screen</code> creates a brand-new <code>handleClick</code> function. So <code>onClick</code> never looks unchanged to <code>memo</code>, and <code>ClickButton</code> re-renders on every keystroke, even though nothing about clicking changed at all.</p>
+
+<pre><code>const handleClick = useCallback(() =&gt; setCount(count + 1), [count]);
+// stable unless count itself changes — typing in the text field no longer
+// creates a new handleClick, so ClickButton stops re-rendering on keystrokes</code></pre>
+
+<div class="source">
+Primary source: <a href="https://react.dev/reference/react/useCallback" target="_blank">react.dev — useCallback: Skipping re-rendering of components</a> (this example is a simplified version of the same mechanism react.dev documents with a checkout-form example)
+</div>
+
+<p>Same underlying mechanism as <code>useFocusEffect</code>, different receiver: there, <code>useFocusEffect</code> was the thing comparing references to decide "should I re-run this?" Here, <code>memo</code> is the thing comparing references to decide "should I re-render this?" <code>useCallback</code>'s job is identical in both: give whoever's comparing a stable reference to compare against.</p>
+
+<h2>Trace it through your own code</h2>
+
+<p>Your <code>useCallback</code> has one dependency: <code>getMasteredWords</code>. Is <em>that</em> stable across renders of <code>MasteredWordsScreen</code>? Look at <code>hooks/useMasteredWords.ts</code>:</p>
+
+<pre><code>const getMasteredWords = useCallback(async () =&gt; {
+  ...
+}, []);</code></pre>
+
+<p><code>getMasteredWords</code> is itself wrapped in <code>useCallback</code> with an empty dependency array — meaning it never changes reference for the lifetime of the hook. That's what makes the whole chain stable: <code>getMasteredWords</code> never changes &rarr; your <code>useCallback</code>'s dependency never changes &rarr; your wrapped function never changes &rarr; <code>useFocusEffect</code> only re-runs it when the screen actually re-focuses, not on every render.</p>
+
+<div class="quiz" id="q1">
+<p class="q">1. Does writing <code>() =&gt; {}</code> directly inside a component body create a new function object on every render, or reuse the same one?</p>
+<button class="opt" data-correct="true">A new one, every render</button>
+<button class="opt" data-correct="false">The same one, every render</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q2">
+<p class="q">2. What does useCallback change about the function you pass it?</p>
+<button class="opt" data-correct="true">Its reference identity, not its behavior</button>
+<button class="opt" data-correct="false">Its behavior, not its reference identity</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q3">
+<p class="q">3. In mastered-words.tsx, why does the useFocusEffect callback stay stable across renders?</p>
+<button class="opt" data-correct="false">Because useFocusEffect ignores references entirely</button>
+<button class="opt" data-correct="true">Because getMasteredWords itself never changes reference</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q4">
+<p class="q">4. In both the ClickButton and useFocusEffect examples, what is actually comparing the function references to decide what to do?</p>
+<button class="opt" data-correct="false">useCallback itself decides both cases</button>
+<button class="opt" data-correct="true">Whichever receiver got the callback</button>
+<div class="feedback"></div>
+</div>
+
+<p class="ask-agent">If any of this is unclear, ask your agent. Good follow-ups: "what would happen if I removed the useCallback wrapper here?" or "does plain useEffect have this same reference problem with its dependency array?"</p>
+
+<div class="footer-nav">
+  &larr; <a href="0001-what-is-a-callback.html">Lesson 1</a> · <a href="../MISSION.md">Mission</a> · Prerequisite detour if this felt fuzzy: <a href="0003-how-hooks-remember-things.html">Lesson 3: How Hooks Remember Things Between Renders</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz').forEach(function (quiz) {
+  var buttons = quiz.querySelectorAll('button.opt');
+  var feedback = quiz.querySelector('.feedback');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var correct = btn.getAttribute('data-correct') === 'true';
+      buttons.forEach(function (b) { b.disabled = true; });
+      btn.classList.add(correct ? 'correct' : 'incorrect');
+      feedback.textContent = correct ? '✓ Correct.' : '✗ Not quite — think about what === actually compares for functions.';
+      feedback.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+      if (!correct) {
+        buttons.forEach(function (b) {
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

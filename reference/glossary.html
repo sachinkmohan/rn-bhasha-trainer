@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Glossary — Callbacks &amp; Hooks</title>
+<link rel="stylesheet" href="../teach-assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Reference</div>
+<h1>Glossary — Callbacks &amp; Hooks</h1>
+
+<p>Compressed definitions, in the order you'll meet them. Every lesson uses these exact terms — if a lesson's wording ever drifts from this page, this page wins.</p>
+
+<h2>Callback</h2>
+<p>A function passed into another piece of code as an argument, to be invoked later by that code — not by you, and not necessarily right away. See <a href="../lessons/0001-what-is-a-callback.html">Lesson 1</a>.</p>
+
+<h2>Callback prop</h2>
+<p>A callback that travels through a React component's <code>props</code> instead of a plain function argument. The component receiving it decides <em>when</em> to call it; the component (or screen) that passed it decides <em>what happens</em> when it's called.</p>
+
+<h2>Hook memory cell</h2>
+<p>Each component instance gets a private, ordered list of storage slots that survives across that instance's re-renders. Every hook call (<code>useState</code>, <code>useCallback</code>, <code>useRef</code>, etc.) claims the next slot in that list, in the exact order the hooks are called. This is why hooks can't be called conditionally — React identifies "which slot is this" by call order alone. See <a href="../lessons/0003-how-hooks-remember-things.html">Lesson 3</a>.</p>
+
+<h2>Reference equality</h2>
+<p>JavaScript's rule that two functions (or objects/arrays) are only <code>===</code>-equal if they're the literal same object in memory — not if their code/contents merely look identical. <code>() =&gt; {}</code> written twice creates two unequal objects.</p>
+
+<h2>Memoization</h2>
+<p>Reusing a previously-computed value instead of recomputing it, when the inputs haven't changed. <code>useCallback</code> and <code>useMemo</code> are React's memoization hooks — they reuse the last function/value if their dependency array is unchanged.</p>
+
+<h2>useCallback</h2>
+<p>A hook that returns a stable function reference across renders, as long as its dependency array hasn't changed. Doesn't change what the function does — only whether repeated renders get the same object or a new one. See <a href="../lessons/0002-why-usecallback-wraps-it.html">Lesson 2</a>.</p>
+
+</body>
+</html>
