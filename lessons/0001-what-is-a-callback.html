@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 1: What Is a Callback?</title>
+<link rel="stylesheet" href="../teach-assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0001 · Callbacks</div>
+<h1>What Is a Callback?</h1>
+
+<p>A <strong>callback</strong> is nothing more than: a function, handed to another piece of code as an argument, which that other code calls at the right moment. The function doesn't run immediately when you pass it — it runs later, whenever the receiver decides to invoke it.</p>
+
+<div class="source">
+Primary source: <a href="https://developer.mozilla.org/en-US/docs/Glossary/Callback_function" target="_blank">MDN — Callback function</a>
+</div>
+
+<p>The smallest possible example:</p>
+
+<pre><code>function greet(name, onDone) {
+  console.log("Hi " + name);
+  onDone(); // &lt;- the receiver decides when to call it
+}
+
+greet("Sachin", () =&gt; console.log("greeting finished"));</code></pre>
+
+<p><code>onDone</code> is a callback. <code>greet</code> didn't define what it does — the <em>caller</em> of <code>greet</code> did. <code>greet</code> just promised to call it at some point.</p>
+
+<h2>The same idea, as a React prop</h2>
+
+<p>React doesn't add anything new here — a "callback prop" is just a callback that happens to travel through <code>props</code> instead of a normal argument list. Official React docs call this exact pattern out:</p>
+
+<div class="source">
+Primary source: <a href="https://legacy.reactjs.org/docs/faq-functions.html" target="_blank">React docs — Passing Functions to Components</a>
+</div>
+
+<p>Now the code you've actually been reading. In <code>components/pronunciation/AudioPlayer.tsx</code>:</p>
+
+<pre><code>interface AudioPlayerProps {
+  audioFile?: string;
+  onPlay?: () =&gt; void;
+  onPlaybackComplete?: () =&gt; void;
+  onError?: (error: Error) =&gt; void;
+  disabled?: boolean;
+}
+
+export function AudioPlayer({ audioFile, onPlay, onPlaybackComplete, onError, disabled }: AudioPlayerProps) {
+  ...
+  const handlePlay = () =&gt; {
+    ...
+    player.play();
+    onPlay?.();          // line 84 — AudioPlayer invokes the callback it was handed
+    ...
+    timeoutRef.current = setTimeout(() =&gt; {
+      onPlaybackComplete?.();  // line 90 — same idea, later
+      ...
+    }, 2500);
+  };
+}</code></pre>
+
+<div class="callout">
+<strong>The key move:</strong> <code>AudioPlayer</code> never defines what <code>onPlay</code> or <code>onPlaybackComplete</code> <em>do</em>. It only decides <em>when</em> to call them. Whoever renders <code>&lt;AudioPlayer onPlay={...} /&gt;</code> supplies the actual behavior. That's why grepping <code>utils/audio.ts</code> for these names finds nothing — they were never <code>AudioPlayer</code>'s to define.
+</div>
+
+<h2>Not every function on that screen is a callback prop</h2>
+
+<p><code>player.play()</code> is different — <code>player</code> comes back from the <code>useWordAudio()</code> hook, and <code>.play()</code> is a method that hook's return value exposes. Nobody "handed" <code>play</code> to <code>AudioPlayer</code> as a prop; it's part of the object the hook returned. Same surface shape (a function you call), different relationship.</p>
+
+<div class="quiz" id="q1">
+<p class="q">1. In AudioPlayer.tsx, who writes the actual function body that runs when <code>onPlaybackComplete?.()</code> fires?</p>
+<button class="opt" data-correct="false">AudioPlayer itself</button>
+<button class="opt" data-correct="false">The useWordAudio hook</button>
+<button class="opt" data-correct="true">Whatever component renders &lt;AudioPlayer /&gt;</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q2">
+<p class="q">2. Is <code>player.play()</code> a callback prop, in the sense used in this lesson?</p>
+<button class="opt" data-correct="false">Yes</button>
+<button class="opt" data-correct="true">No</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q3">
+<p class="q">3. Your new PlayAudioButton just needs to play a sound when tapped, with nothing else reacting to it. Does it need an onPlay-style callback prop?</p>
+<button class="opt" data-correct="false">Yes, always include it for consistency</button>
+<button class="opt" data-correct="true">No — only add it when a caller actually needs to react</button>
+<div class="feedback"></div>
+</div>
+
+<p class="ask-agent">If any of this is unclear, ask your agent — that's what it's there for. Good follow-ups: "show me another callback prop example elsewhere in this repo" or "what happens if I forget the <code>?.</code> before calling a callback that wasn't passed?"</p>
+
+<div class="footer-nav">
+  &larr; <a href="../MISSION.md">Mission</a> · Next: <a href="0002-why-usecallback-wraps-it.html">Lesson 2: Why useCallback Wraps It</a>
+</div>
+
+<script>
+document.querySelectorAll('.quiz').forEach(function (quiz) {
+  var buttons = quiz.querySelectorAll('button.opt');
+  var feedback = quiz.querySelector('.feedback');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var correct = btn.getAttribute('data-correct') === 'true';
+      buttons.forEach(function (b) { b.disabled = true; });
+      btn.classList.add(correct ? 'correct' : 'incorrect');
+      feedback.textContent = correct ? '✓ Correct.' : '✗ Not quite — look again at who defines vs. who calls.';
+      feedback.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+      if (!correct) {
+        buttons.forEach(function (b) {
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>

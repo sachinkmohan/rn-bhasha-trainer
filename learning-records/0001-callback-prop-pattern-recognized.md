@@ -1,0 +1,3 @@
+# Recognized the callback-prop pattern independently
+
+While tracing `onPlay`/`onPlaybackComplete` in `AudioPlayer.tsx`, the user correctly identified that these weren't defined in `utils/audio.ts` (where `useWordAudio` lives) before being told why — they'd already noticed the "gap" and just hadn't named the underlying pattern (a component invents callback props for its parent to react to; it never defines their bodies). Lesson 0001 closed that naming gap. This means future lessons can assume solid footing on "callback = function passed in, invoked later by the receiver" and move to harder wrinkles (e.g. reference stability / memoization) rather than re-teaching the basic definition.

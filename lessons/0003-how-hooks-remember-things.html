@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lesson 3: How Hooks Remember Things Between Renders</title>
+<link rel="stylesheet" href="../teach-assets/style.css">
+</head>
+<body>
+
+<div class="kicker">Lesson 0003 · Callbacks (prerequisite detour)</div>
+<h1>How Hooks Remember Things Between Renders</h1>
+
+<p>This is a detour before returning to <a href="0002-why-usecallback-wraps-it.html">Lesson 2</a> — that lesson assumed you already knew how any hook "remembers" something across renders. This lesson fills that gap. Once it clicks, Lesson 2 should make a lot more sense on a re-read.</p>
+
+<h2>You've already lived this problem once</h2>
+
+<p>Remember building <code>PlayAudioButton</code>: you tried a plain <code>const isPlaying = false</code>, and we established two things — a <code>const</code> can't be reassigned at all, and even a mutable <code>let</code> wouldn't make the icon change, because changing a plain variable doesn't tell React to redraw anything. You fixed it with <code>useState</code>.</p>
+
+<p>Here's the piece that was missing then: <em>how</em> does <code>useState</code> remember <code>isPlaying</code>'s value from one render to the next, when the entire component function — including every <code>const</code> inside it — runs again from scratch on every render?</p>
+
+<h2>React's answer: a private, ordered list per component</h2>
+
+<p>Each component instance gets its own hidden list of storage slots that survives across that instance's re-renders — think of it as an array React keeps privately, one entry per hook call. When your component function runs again, its local <code>const</code>s and <code>let</code>s are all thrown away and recreated — but that hidden list is not. React hands your hooks back into the same slots they used last time.</p>
+
+<div class="source">
+Primary source: <a href="https://react.dev/learn/state-a-components-memory" target="_blank">react.dev — State: A Component's Memory</a>
+</div>
+
+<pre><code>function PlayAudioButton({ audioFile }) {
+  const player = useWordAudio(audioFile);      // slot 0
+  const [isPlaying, setIsPlaying] = useState(false); // slot 1
+  ...
+}</code></pre>
+
+<p>Every time <code>PlayAudioButton</code> renders, <code>useState(false)</code> runs again — but React doesn't hand back a fresh <code>false</code> every time. It looks up slot 1, sees a value already stored there from last render (say, <code>true</code>, because you tapped the button), and hands <em>that</em> back instead of the <code>false</code> you wrote in the code. That's the whole trick.</p>
+
+<div class="callout">
+<strong>Why hook order can never change:</strong> React identifies "which slot is this" purely by <em>the order hooks are called in</em>, not by variable name. If you wrapped a hook call in an <code>if</code>, some renders would call it and others wouldn't — shifting every subsequent hook into the wrong slot. That's the real reason hooks can't be conditional.
+</div>
+
+<h2>Now apply this to useCallback</h2>
+
+<p><code>useCallback</code> uses the exact same slot mechanism — its slot stores two things: the function from last render, and the dependency array from last render. Each render, it compares the new dependency array against the stored one, item by item. Unchanged? Hand back the old stored function, let the freshly-written one (which you just saw gets recreated every render, from Lesson 2) get thrown away unused. Changed? Store and return the new one instead.</p>
+
+<p>That's the mechanism behind the "stable reference" idea from Lesson 2 — it's not magic, it's the same memory-slot system <code>useState</code> uses, just storing a function instead of a value.</p>
+
+<div class="quiz" id="q1">
+<p class="q">1. When a component re-renders, do its local const/let variables survive, or get recreated fresh?</p>
+<button class="opt" data-correct="true">Recreated fresh, every render</button>
+<button class="opt" data-correct="false">They survive, every render</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q2">
+<p class="q">2. How does React know which stored slot belongs to which hook call?</p>
+<button class="opt" data-correct="false">By matching each hook's variable name</button>
+<button class="opt" data-correct="true">By the order hooks are called in</button>
+<div class="feedback"></div>
+</div>
+
+<div class="quiz" id="q3">
+<p class="q">3. What two things does useCallback's slot actually store?</p>
+<button class="opt" data-correct="true">The last function and the last deps array</button>
+<button class="opt" data-correct="false">Only the most recent deps array value</button>
+<div class="feedback"></div>
+</div>
+
+<p class="ask-agent">If any of this is unclear, ask your agent. Good follow-ups: "what happens if I put a useState call inside an if-statement?" or "does useRef use this same slot mechanism?"</p>
+
+<div class="footer-nav">
+  &larr; <a href="0002-why-usecallback-wraps-it.html">Lesson 2</a> · <a href="../reference/glossary.html">Glossary</a> · <a href="../MISSION.md">Mission</a> · Next: revisit <a href="0002-why-usecallback-wraps-it.html">Lesson 2</a> with this foundation
+</div>
+
+<script>
+document.querySelectorAll('.quiz').forEach(function (quiz) {
+  var buttons = quiz.querySelectorAll('button.opt');
+  var feedback = quiz.querySelector('.feedback');
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var correct = btn.getAttribute('data-correct') === 'true';
+      buttons.forEach(function (b) { b.disabled = true; });
+      btn.classList.add(correct ? 'correct' : 'incorrect');
+      feedback.textContent = correct ? '✓ Correct.' : '✗ Not quite — think about what actually survives a re-render.';
+      feedback.className = 'feedback ' + (correct ? 'correct' : 'incorrect');
+      if (!correct) {
+        buttons.forEach(function (b) {
+          if (b.getAttribute('data-correct') === 'true') b.classList.add('correct');
+        });
+      }
+    });
+  });
+});
+</script>
+
+</body>
+</html>
