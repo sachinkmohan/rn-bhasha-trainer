@@ -25,7 +25,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
-  scheme: "bhashasakhi",
+  scheme: IS_DEV ? "bhashasakhi-dev" : "bhashasakhi",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
   jsEngine: "hermes",
@@ -33,6 +33,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     checkAutomatically: "NEVER",
   },
   ios: {
+    bundleIdentifier: getUniqueIdentifier(),
     supportsTablet: true,
   },
   android: {
